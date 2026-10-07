@@ -23,7 +23,7 @@ function render() {
   html.lang = t.lang; html.dir = t.dir; document.title = t.title;
   const md = $('meta[name="description"]'); md && (md.content = t.desc);
   $('#skip').textContent = t.skip;
-  $('#nav').innerHTML = ['works', 'services', 'process', 'contact'].map((k) => `<a href="#${k}" data-k="${k}">${esc(t.nav[k])}</a>`).join('');
+  $('#nav').innerHTML = ['works', 'about', 'services', 'process', 'contact'].map((k) => `<a href="#${k}" data-k="${k}">${esc(t.nav[k])}</a>`).join('');
   $('#lang').textContent = t.switchTo; $('#lang').setAttribute('aria-label', t.switchTo); $('#hdrCta').textContent = t.cta;
   const h = t.hero;
   $('#hBadge').textContent = h.badge; $('#h1a').textContent = h.h1a; $('#h1b').textContent = h.h1b; $('#hSub').textContent = h.sub;
@@ -33,15 +33,21 @@ function render() {
   $('#wClient').innerHTML = vis.filter((x) => x.group === 'client').map((x, i) => card(x, i, t)).join('');
   $('#wShow').innerHTML = vis.filter((x) => x.group === 'showcase').map((x, i) => card(x, i, t)).join('');
   $('#gClient').hidden = !$('#wClient').children.length; $('#wClient').hidden = $('#gClient').hidden;
+  const ab = t.about; $('#aKicker').textContent = ab.kicker; $('#aH2').textContent = ab.h2; $('#aText').innerHTML = ab.p.map((x) => `<p>${esc(x)}</p>`).join('');
+  $('#aName').textContent = CONFIG.CREDIT; $('#aRole').textContent = ab.role; $('#aChips').innerHTML = ab.chips.map((x) => `<span>${esc(x)}</span>`).join('');
   const s = t.services; $('#sKicker').textContent = s.kicker; $('#sH2').textContent = s.h2;
   $('#sList').innerHTML = s.items.map(([n, d], i) => `<li class="rv" style="--d:${i * .06}s"><h3>${esc(n)}</h3><p>${esc(d)}</p></li>`).join('');
   const p = t.process; $('#pKicker').textContent = p.kicker; $('#pH2').textContent = p.h2;
   $('#pList').innerHTML = p.items.map(([n, d], i) => `<li class="rv" style="--d:${i * .07}s"><h3>${esc(n)}</h3><p>${esc(d)}</p></li>`).join('');
   const c = t.contact; $('#cKicker').textContent = c.kicker; $('#cH2').textContent = c.h2; $('#cLead').textContent = c.lead;
-  const wa = CONFIG.WA_NUMBER ? `<a class="btn btn-lg" href="https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(c.waMsg)}" target="_blank" rel="noopener">${esc(c.wa)}</a>` : '';
-  $('#cBtns').innerHTML = `<a class="btn btn-lg" href="${esc(CONFIG.LINKEDIN)}" target="_blank" rel="noopener">${esc(c.linkedin)}</a>${wa}`;
+  const waUrl = `https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(c.waMsg)}`;
+  const wa = CONFIG.WA_NUMBER ? `<a class="btn btn-lg" href="${waUrl}" target="_blank" rel="noopener">${esc(c.wa)}</a>` : '';
+  $('#cBtns').innerHTML = `${wa}<a class="btn btn-lg${wa ? ' btn-line' : ''}" href="${esc(CONFIG.LINKEDIN)}" target="_blank" rel="noopener">${esc(c.linkedin)}</a>`;
+  /* الرقم عنصر مستقل بـdir=ltr كي لا ينعكس داخل فقرة عربية */
+  $('#cTel').innerHTML = CONFIG.WA_NUMBER ? `<a dir="ltr" href="${waUrl}" target="_blank" rel="noopener">${esc(CONFIG.WA_SHOW)}</a>` : '';
   $('#fBrand').textContent = CONFIG.BRAND; $('#fTag').textContent = t.footer.tag;
-  $('#fCredit').textContent = `© ${CONFIG.YEAR} ${CONFIG.BRAND}. ${t.footer.rights}. ${t.footer.credit} ${CONFIG.CREDIT}.`;
+  /* ثلاث جمل منفصلة كي لا تختلط الكتل العربية واللاتينية في سطر واحد */
+  $('#fCredit').innerHTML = [`© ${CONFIG.YEAR} ${CONFIG.BRAND}`, t.footer.rights, `${t.footer.credit} ${CONFIG.CREDIT}`].map((x) => `<span>${esc(x)}</span>`).join(' · ');
   observe();
 }
 
@@ -60,6 +66,6 @@ $('#lang').addEventListener('click', () => {
 });
 if ('IntersectionObserver' in window) {
   const spy = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) $$('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.k === en.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
-  ['works', 'services', 'process', 'contact'].forEach((id) => spy.observe($('#' + id)));
+  ['works', 'about', 'services', 'process', 'contact'].forEach((id) => spy.observe($('#' + id)));
 }
 render();
