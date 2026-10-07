@@ -31,11 +31,13 @@ export const T = {
     skip: 'تخطَّ إلى المحتوى',
     nav: { works: 'أعمالنا', about: 'من نحن', services: 'ما نقدّمه', process: 'كيف نعمل', contact: 'تواصل' },
     cta: 'اطلب موقعك',
+    ticker: ['مواقع سريعة', 'تصميم خاص', 'يعمل على الجوال', 'طلب عبر واتساب', 'ثلاثي الأبعاد', 'تطبيقات Flutter', 'بالعربية والإنجليزية'],
     hero: {
       badge: 'عرض الإطلاق: أول 5 عملاء بشروط خاصة حتى 31 أكتوبر',
       h1a: 'موقع جميل وسريع لنشاطك،', h1b: 'وزبونك يصلك على واتساب.',
       sub: 'نصمّم ونبني مواقع للأنشطة الصغيرة بتصميم خاص يعمل بسلاسة على الجوال، ونسلّمها خلال أيام. بالعربية والإنجليزية وغيرها.',
       cta2: 'شاهد أعمالنا',
+      chat: ['مرحباً، أريد أن أطلب', 'أهلاً! وصلنا طلبك، شكراً لك'],
       facts: ['تسليم خلال أيام', 'يعمل على الجوال', 'طلب عبر واتساب', 'النطاق والمحتوى ملكك']
     },
     works: {
@@ -78,7 +80,7 @@ export const T = {
     },
     contact: {
       kicker: 'تواصل', h2: 'احكِ لنا عن نشاطك', lead: 'أرسل رسالة قصيرة عن نشاطك، ونرد بفكرة واضحة لموقعك بدون التزام.',
-      linkedin: 'راسلنا على لينكدإن', wa: 'راسلنا على واتساب', waMsg: 'مرحباً، أرغب بموقع لنشاطي. أرسلت لكم من صفحة MOHAMMED.'
+      linkedin: 'راسلنا على لينكدإن', wa: 'راسلنا على واتساب', waTip: 'اكتب لنا', waMsg: 'مرحباً، أرغب بموقع لنشاطي. أرسلت لكم من صفحة MOHAMMED.'
     },
     footer: { tag: 'مواقع سريعة وجميلة.', rights: 'جميع الحقوق محفوظة', credit: 'تصميم وتطوير' }
   },
@@ -90,11 +92,13 @@ export const T = {
     skip: 'Skip to content',
     nav: { works: 'Our work', about: 'About', services: 'What we do', process: 'How we work', contact: 'Contact' },
     cta: 'Get your website',
+    ticker: ['Fast websites', 'Custom design', 'Works on phones', 'Orders via WhatsApp', '3D on the web', 'Flutter apps', 'Arabic and English'],
     hero: {
       badge: 'Launch offer: the first 5 clients, special terms until October 31',
       h1a: 'A fast, beautiful website for your business,', h1b: 'and customers reach you on WhatsApp.',
       sub: 'We design and build websites for small businesses with a custom look that runs smoothly on phones, delivered in days. In Arabic, English and more.',
       cta2: 'See our work',
+      chat: ['Hi, I would like to order', 'Hello! We got your order, thank you'],
       facts: ['Delivered in days', 'Works on phones', 'Orders via WhatsApp', 'Domain and content are yours']
     },
     works: {
@@ -137,7 +141,7 @@ export const T = {
     },
     contact: {
       kicker: 'Contact', h2: 'Tell us about your business', lead: 'Send a short note about your business and we reply with a clear idea for your site, no obligation.',
-      linkedin: 'Message us on LinkedIn', wa: 'Message us on WhatsApp', waMsg: 'Hello, I would like a website for my business. I wrote from the MOHAMMED page.'
+      linkedin: 'Message us on LinkedIn', wa: 'Message us on WhatsApp', waTip: 'Message us', waMsg: 'Hello, I would like a website for my business. I wrote from the MOHAMMED page.'
     },
     footer: { tag: 'Fast, beautiful websites.', rights: 'All rights reserved', credit: 'Designed & developed by' }
   }
