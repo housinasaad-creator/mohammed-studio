@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -30,7 +30,7 @@
     </a>
     <nav class="nav" id="nav" aria-label="main"></nav>
     <div class="hdr-r">
-      <button class="lang" id="lang" type="button"></button>
+      <div class="langs" id="langs" role="group" aria-label="Language"></div>
       <a class="btn btn-sm hdr-cta" href="#contact" id="hdrCta"></a>
     </div>
   </div>
@@ -65,15 +65,38 @@
     </div>
   </section>
 
-  <div class="ticker-wrap" id="ticker" aria-hidden="true"><div class="ticker"><div class="tk-track" id="tkTrack"></div></div></div>
-
-  <section class="sec" id="works"><div class="wrap">
-    <header class="sec-h rv"><p class="kicker" id="wKicker"></p><h2 id="wH2"></h2></header>
-    <h3 class="grp rv" id="gClient"></h3>
-    <div class="works" id="wClient"></div>
-    <h3 class="grp rv" id="gShow"></h3>
-    <div class="works" id="wShow"></div>
+  <section class="pick" id="pick"><div class="wrap">
+    <div class="pick-card rv">
+      <div class="pick-l"><p class="kicker" id="kKicker"></p><h2 id="kH2"></h2><p class="pick-sub" id="kSub"></p><div class="pchips" id="kChips" role="group"></div></div>
+      <div class="pick-r" id="kOut" aria-live="polite"></div>
+    </div>
   </div></section>
+
+  <section class="sec sec-works" id="works">
+    <div class="sec-fx" id="wfx" aria-hidden="true">
+      <i class="mesh m1"></i><i class="mesh m2"></i>
+      <svg class="wpath" viewBox="0 0 1200 1600" preserveAspectRatio="none"><path d="M-20 150C240 60 420 330 640 260S1040 110 1220 330M-20 790C240 650 520 950 760 830S1100 710 1220 890M-20 1330C300 1230 520 1510 800 1390S1100 1290 1220 1470"/></svg>
+      <svg class="wi w1" style="--k:.07" viewBox="0 0 90 70"><rect x="3" y="3" width="84" height="64" rx="9"/><path d="M3 20h84M14 34h34M14 44h56M14 54h24"/><circle cx="14" cy="11.5" r="2.2" class="f"/><circle cx="23" cy="11.5" r="2.2" class="f"/><circle cx="32" cy="11.5" r="2.2" class="f"/></svg>
+      <svg class="wi w2" style="--k:-.05" viewBox="0 0 80 72"><path d="M24 14L6 36l18 22M56 14l18 22-18 22M46 10L34 62"/></svg>
+      <svg class="wi w3" style="--k:.09" viewBox="0 0 60 70"><path class="f" d="M10 6v44l12-11 9 20 10-5-9-19 17-1z"/></svg>
+      <svg class="wi w4 c" style="--k:-.08" viewBox="0 0 72 72"><circle cx="36" cy="36" r="30"/><circle cx="36" cy="36" r="21"/><path d="M26 46V26l10 12 10-12v20"/></svg>
+      <svg class="wi w5" style="--k:.06" viewBox="0 0 80 80"><path d="M26 8c-10 0-8 12-8 18s-6 10-10 10c4 0 10 4 10 10s-2 18 8 18M54 8c10 0 8 12 8 18s6 10 10 10c-4 0-10 4-10 10s2 18-8 18"/></svg>
+      <svg class="wi w6" style="--k:-.07" viewBox="0 0 70 80"><rect x="14" y="4" width="42" height="72" rx="9"/><path d="M28 12h14"/><circle cx="35" cy="67" r="3"/></svg>
+      <svg class="wi w7 c" style="--k:.05" viewBox="0 0 80 80"><path d="M40 12v56M12 40h56" stroke-width="7"/></svg>
+      <svg class="wi w8 c sp" style="--k:-.06" viewBox="0 0 40 40"><path class="f" d="M20 0c2 12 8 18 20 20-12 2-18 8-20 20-2-12-8-18-20-20 12-2 18-8 20-20z"/></svg>
+      <svg class="wi w9" style="--k:.08" viewBox="0 0 90 70"><rect x="3" y="3" width="84" height="64" rx="9"/><path d="M3 20h84M14 36h26M14 48h44"/><circle cx="14" cy="11.5" r="2.2" class="f"/><circle cx="23" cy="11.5" r="2.2" class="f"/><circle cx="32" cy="11.5" r="2.2" class="f"/></svg>
+      <svg class="wi w10 c" style="--k:-.05" viewBox="0 0 72 72"><circle cx="36" cy="36" r="30"/><circle cx="36" cy="36" r="21"/><path d="M26 46V26l10 12 10-12v20"/></svg>
+      <svg class="wi w11" style="--k:.06" viewBox="0 0 80 80"><path d="M40 10L72 66H8z"/></svg>
+      <svg class="wi w12 c sp" style="--k:-.04" viewBox="0 0 40 40"><path class="f" d="M20 0c2 12 8 18 20 20-12 2-18 8-20 20-2-12-8-18-20-20 12-2 18-8 20-20z"/></svg>
+    </div>
+    <div class="wrap">
+      <header class="sec-h rv"><p class="kicker" id="wKicker"></p><h2 id="wH2"></h2></header>
+      <h3 class="grp rv" id="gClient"></h3>
+      <div class="works" id="wClient"></div>
+      <h3 class="grp rv" id="gShow"></h3>
+      <div class="works" id="wShow"></div>
+    </div>
+  </section>
 
   <section class="sec sec-alt" id="about"><div class="wrap about-in">
     <div class="about-copy rv"><p class="kicker" id="aKicker"></p><h2 id="aH2"></h2><div class="about-text" id="aText"></div></div>
