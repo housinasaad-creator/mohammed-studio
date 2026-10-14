@@ -21,7 +21,9 @@ export const WORKS = [
   { id: 'khayt', group: 'showcase', url: 'https://housinasaad-creator.github.io/khayt-fashion-store/', tags: ['Flutter', 'Store', 'Mobile'] },
   { id: 'furniture', group: 'showcase', url: 'https://housinasaad-creator.github.io/mohammed-furniture-site/', tags: ['3D', 'Store', 'TR · EN · AR'] },
   { id: 'hazem', group: 'showcase', url: 'https://housinasaad-creator.github.io/hazem-driving-school/', tags: ['5 languages', 'Video hero'] },
-  { id: 'english', group: 'showcase', url: 'https://housinasaad-creator.github.io/english-learning-platform/', tags: ['Education', 'A1 → C1', 'Audio'] }
+  { id: 'english', group: 'showcase', url: 'https://housinasaad-creator.github.io/english-learning-platform/', tags: ['Education', 'A1 → C1', 'Audio'] },
+  /* آخر بطاقة في النماذج عمداً: بعيدة عن موزاييك، بلا اسم شركة ولا مدينة. معاينة تصميم (الموقع غير مطلَق بعد). */
+  { id: 'packaging', group: 'showcase', url: 'https://housinasaad-creator.github.io/fortunepack-site/', tags: ['3D fold', 'Box studio', 'TR · EN · AR'] }
 ];
 
 /* أنشطة "ما نشاطك؟": ex = مثال حقيقي من أعمالنا (يُعرض فقط حيث يوجد مثال مناسب) */
@@ -75,7 +77,8 @@ export const T = {
         khayt: ['Khayt · خيط', 'نموذج متجر أزياء', 'متجر خفيف وجميل يتلوّن مع القطعة المختارة، مبني بـ Flutter ويعمل بسرعة على الجوال.'],
         furniture: ['MOHAMMED Mobilia', 'نموذج موقع أثاث', 'جولة ثلاثية الأبعاد في بيت يتغيّر مع ساعات اليوم: الشمس تعبر النوافذ، والقطع تُبنى أمامك، ويتبدّل القماش والخشب مباشرة. التجربة الكاملة على الكمبيوتر.'],
         hazem: ['موقع مدرسة قيادة', 'نموذج موقع بخمس لغات', 'موقع لمدرسة قيادة بالعربية والألمانية وغيرها: فيديو بالواجهة، دروس، ونظام تسجيل.'],
-        english: ['منصة تعلّم الإنجليزية', 'نموذج منصة تعليمية', 'منصة لتعلّم الإنجليزية بالعربية من A1 إلى C1: شرح للقواعد بالعربي، تمارين تفاعلية، وتسجيلات صوتية.']
+        english: ['منصة تعلّم الإنجليزية', 'نموذج منصة تعليمية', 'منصة لتعلّم الإنجليزية بالعربية من A1 إلى C1: شرح للقواعد بالعربي، تمارين تفاعلية، وتسجيلات صوتية.'],
+        packaging: ['موقع شركة تغليف', 'معاينة تصميم', 'موقع بثلاث لغات لمصنّع كرتون مضلّع: علبة تنطوي أمامك مع التمرير، ومولّد قالب قصّ حيّ بمقاساتك، وكتالوج منتجات، وطلب عرض سعر عبر واتساب. التجربة الكاملة على الكمبيوتر.']
       }
     },
     about: {
@@ -150,7 +153,8 @@ export const T = {
         khayt: ['Khayt · خيط', 'Fashion store concept', 'A light, beautiful store that recolours with the chosen piece, built with Flutter and fast on phones.'],
         furniture: ['MOHAMMED Mobilia', 'Furniture store concept', 'A 3D walk through a home that changes with the hours of the day: sun crossing the windows, pieces that build themselves in front of you, and live fabric and wood swaps. Best on desktop.'],
         hazem: ['Driving school website', 'A five-language concept', 'A driving school site in Arabic, German and more: video hero, lessons and a sign-up system.'],
-        english: ['English Learning Platform', 'Learning platform concept', 'An English-learning site for Arabic speakers from A1 to C1: grammar explained in Arabic, interactive exercises and audio recordings.']
+        english: ['English Learning Platform', 'Learning platform concept', 'An English-learning site for Arabic speakers from A1 to C1: grammar explained in Arabic, interactive exercises and audio recordings.'],
+        packaging: ['Packaging manufacturer website', 'Design preview', 'A three-language site for a corrugated packaging maker: a box that folds as you scroll, a live die-line generator with your own dimensions, a product catalogue and a WhatsApp quote request. Best on desktop.']
       }
     },
     about: {
@@ -225,7 +229,8 @@ export const T = {
         khayt: ['Khayt · خيط', 'Moda mağazası konsepti', 'Seçilen parçaya göre renklenen, Flutter ile yapılmış hafif ve güzel bir mağaza; telefonda hızlı.'],
         furniture: ['MOHAMMED Mobilia', 'Mobilya mağazası konsepti', 'Günün saatlerine göre değişen bir evde 3D gezinti: güneş pencerelerden geçer, parçalar gözünüzün önünde kurulur, kumaş ve ahşap anında değişir. Tam deneyim masaüstünde.'],
         hazem: ['Sürücü kursu web sitesi', 'Beş dilli konsept', 'Arapça, Almanca ve daha fazla dilde sürücü kursu sitesi: video girişli ana sayfa, dersler ve kayıt sistemi.'],
-        english: ['English Learning Platform', 'Eğitim platformu konsepti', "Arapça konuşanlar için A1'den C1'e İngilizce öğrenme sitesi: Arapça anlatımlı dilbilgisi, etkileşimli alıştırmalar ve ses kayıtları."]
+        english: ['English Learning Platform', 'Eğitim platformu konsepti', "Arapça konuşanlar için A1'den C1'e İngilizce öğrenme sitesi: Arapça anlatımlı dilbilgisi, etkileşimli alıştırmalar ve ses kayıtları."],
+        packaging: ['Ambalaj üreticisi web sitesi', 'Tasarım önizlemesi', 'Oluklu mukavva üreticisi için üç dilli bir site: kaydırdıkça katlanan kutu, ölçülerinize göre canlı kesim şablonu üreteci, ürün kataloğu ve WhatsApp teklif talebi. Tam deneyim masaüstünde.']
       }
     },
     about: {
