@@ -17,7 +17,7 @@ export const CONFIG = {
 
 /* group: real = مشاريع حقيقية (لعملاء أو مشروع خاص)، show = نماذج وتجارب. wip = جارٍ العمل عليه. hidden = لا يظهر. year = سنة التنفيذ */
 export const WORKS = [
-  { id: 'mozaik', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/mozaik/', tags: ['B2B', '3D', 'TR · EN · AR'] },
+  { id: 'mozaik', group: 'real', year: 2026, url: 'https://www.mozaikofset.com.tr/', tags: ['B2B', '3D', 'TR · EN · AR'] },
   { id: 'chocolate', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/mh-chocolate-site/', tags: ['3D', 'WhatsApp', 'Mobile'] },
   { id: 'packaging', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/fortunepack-site/', tags: ['3D fold', 'Box studio', 'TR · EN · AR'] },
   { id: 'english', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/english-learning-platform/', tags: ['Education', 'A1 → C1', 'Audio'] },
