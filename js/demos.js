@@ -1,4 +1,4 @@
-/* ثلاث عيّنات حركة تفاعلية (تحميص القهوة، اثنتا عشرة ساعة من العطر على الجلد، ذوبان الشوكولا). canvas 2D فقط، ولا تعمل إلا وهي ظاهرة على الشاشة. */
+/* أربع عيّنات حركة تفاعلية (بناء موقع من الكود، تحميص القهوة، اثنتا عشرة ساعة من العطر على الجلد، ذوبان الشوكولا). canvas 2D فقط، ولا تعمل إلا وهي ظاهرة على الشاشة. */
 import { esc, ICON, reduced } from './shared.js';
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), lerp = (a, b, k) => a + (b - a) * k, sm = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
@@ -146,11 +146,131 @@ function choco(card, d) {
   };
 }
 
+/* ---------------------------------------- البناء: من الكود إلى موقع حيّ (بصري بلا كلمات) ---------------------------------------- */
+const BPAL = ['#ff6a3d', '#7cc4ff', '#9be3a4', '#ffd27a', '#c8cbd8'];
+const STAGE_AT = [0, .3, .58, .82];
+function build(card, d) {
+  const cv = card.querySelector('canvas'), c = cv.getContext('2d'), rng = card.querySelector('input'), btn = card.querySelector('.pl'), icons = [...card.querySelectorAll('.bst')];
+  const S = { p: 0, play: !reduced, hold: 0, w: 600, h: 300, parts: [], acc: 0, burst: false, prev: 0 };
+  function fit() { const r = cv.getBoundingClientRect(), dp = Math.min(devicePixelRatio || 1, 2); S.w = Math.max(260, Math.round(r.width)); S.h = Math.max(180, Math.round(r.height)); cv.width = Math.round(S.w * dp); cv.height = Math.round(S.h * dp); c.setTransform(dp, 0, 0, dp, 0, 0); }
+  fit(); const ro = 'ResizeObserver' in window ? new ResizeObserver(fit) : null; ro && ro.observe(cv);
+  const stageOf = (p) => (p >= STAGE_AT[3] ? 3 : p >= STAGE_AT[2] ? 2 : p >= STAGE_AT[1] ? 1 : 0);
+  const paint = () => { btn.classList.toggle('on', S.play); btn.setAttribute('aria-label', S.play ? d.pause : d.play); };
+  const setP = (p, user) => { if (user) { S.play = false; paint(); } S.p = clamp(p); rng.value = S.p * 100; rng.style.setProperty('--p', (S.p * 100).toFixed(1) + '%'); const st = stageOf(S.p); icons.forEach((b, i) => { b.classList.toggle('on', i === st); b.classList.toggle('done', i < st); }); };
+  rng.addEventListener('input', () => setP(+rng.value / 100, true));
+  btn.addEventListener('click', () => { if (!S.play && S.p >= .995) setP(0); S.play = !S.play; paint(); });
+  icons.forEach((b, i) => b.addEventListener('click', () => { setP(STAGE_AT[i] + (i ? .02 : 0), true); }));
+  setP(.0); paint(); let time = 0;
+  const ease = sm;
+  function drawCode(cp) {
+    const sc = clamp(cp.w / 330, .62, 1.25), rh = Math.max(13, Math.min(22, (cp.h - 40) / 14)), rows = Math.max(5, Math.floor((cp.h - 44) / rh));
+    rr(c, cp.x, cp.y, cp.w, cp.h, 14); c.fillStyle = '#0e1017'; c.fill(); c.strokeStyle = 'rgba(255,255,255,.16)'; c.lineWidth = 2; c.stroke();
+    c.fillStyle = '#181b26'; c.save(); rr(c, cp.x, cp.y, cp.w, cp.h, 14); c.clip(); c.fillRect(cp.x, cp.y, cp.w, 26); c.restore();
+    ['#ff5f57', '#febc2e', '#28c840'].forEach((k, i) => { c.fillStyle = k; c.beginPath(); c.arc(cp.x + 16 + i * 15, cp.y + 13, 4.4, 0, 6.3); c.fill(); });
+    const rv = S.p * (rows + 3), left = cp.x + 16, top = cp.y + 40; let caret = null;
+    for (let i = 0; i < rows; i++) {
+      const f = clamp(rv - i); if (f <= 0) break; const y = top + i * rh;
+      c.fillStyle = 'rgba(200,203,216,.22)'; rr(c, left, y + rh * .22, 10 * sc, rh * .42, 2); c.fill();
+      const ind = Math.floor(rnd(i * 3.1) * 3) * 14 * sc, n = 2 + Math.floor(rnd(i * 5.7 + 2) * 3), segs = []; let tot = 0;
+      for (let j = 0; j < n; j++) { const w = (22 + rnd(i * 13.7 + j * 3.3) * 70) * sc, col = BPAL[Math.floor(rnd(i * 9.1 + j * 1.7) * 5)]; segs.push([w, col]); tot += w + 7 * sc; }
+      let x = left + 24 * sc + ind, vis = f * tot;
+      for (const [w, col] of segs) { const dw = Math.min(w, Math.max(0, vis)); if (dw > 0) { c.fillStyle = col; c.globalAlpha = .9; rr(c, x, y + rh * .2, dw, rh * .5, rh * .25); c.fill(); c.globalAlpha = 1; } vis -= w + 7 * sc; x += w + 7 * sc; if (vis < -6) break; }
+      caret = [Math.min(x, cp.x + cp.w - 14), y + rh * .1, rh * .7];
+    }
+    if (caret && (Math.floor(time * 2) % 2 === 0)) { c.fillStyle = '#ff6a3d'; c.fillRect(caret[0] + 2, caret[1], 3, caret[2]); }
+  }
+  function drawSite(sp, m, dpl) {
+    const p = S.p, ink = '#12141c', paper = '#f7f4ee';
+    rr(c, sp.x, sp.y, sp.w, sp.h, 14); c.fillStyle = paper; c.fill(); c.strokeStyle = 'rgba(247,244,238,.9)'; c.lineWidth = 2; c.stroke();
+    c.save(); rr(c, sp.x, sp.y, sp.w, sp.h, 14); c.clip();
+    c.fillStyle = '#e4dfd3'; c.fillRect(sp.x, sp.y, sp.w, 26);
+    const dotsOn = ease((p - .34) / .1);
+    ['#ff5f57', '#febc2e', '#28c840'].forEach((k, i) => { c.fillStyle = dotsOn > .5 ? k : '#b9b5aa'; c.beginPath(); c.arc(sp.x + 16 + i * 15, sp.y + 13, 4.4, 0, 6.3); c.fill(); });
+    const uw = sp.w * .42, ux = sp.x + (sp.w - uw) / 2; rr(c, ux, sp.y + 6, uw, 14, 7); c.fillStyle = '#fff'; c.fill(); c.strokeStyle = dpl >= .98 ? '#2fc58a' : 'rgba(18,20,28,.2)'; c.lineWidth = 1.6; c.stroke();
+    c.fillStyle = dpl >= .98 ? '#2fc58a' : '#b9b5aa'; c.beginPath(); c.arc(ux + 10, sp.y + 13, 3, 0, 6.3); c.fill(); c.fillStyle = 'rgba(18,20,28,.28)'; rr(c, ux + 20, sp.y + 10.5, uw * .5, 5, 2.5); c.fill();
+    const X = sp.x + 14, Y = sp.y + 38, CW = sp.w - 28, CH = sp.h - 38 - 14, P = (fx, fy, fw, fh) => [X + fx * CW, Y + fy * CH, fw * CW, fh * CH];
+    /* مرحلتا الهيكل واللون: كل عنصر يظهر سلكياً ثم يمتلئ لونه بالتتابع */
+    const wa = (k) => ease((p - k * .016) / .04), fa = (k) => ease((p - .3 - k * .014) / .05);
+    const frame = (k, [x, y, w, h], r, fill, draw) => {
+      const a = wa(k), f = fa(k); if (a <= 0) return;
+      c.save(); c.setLineDash([5, 4]); c.lineWidth = 1.6; c.strokeStyle = `rgba(110,115,135,${a * (1 - f * .95)})`; rr(c, x, y, w, h, r); c.stroke(); c.restore();
+      if (f > 0) { c.save(); c.globalAlpha = f; const cx = x + w / 2, cy = y + h / 2, s = .93 + .07 * f; c.translate(cx, cy); c.scale(s, s); c.translate(-cx, -cy); if (fill) { rr(c, x, y, w, h, r); c.fillStyle = fill; c.fill(); } draw && draw(x, y, w, h); c.restore(); }
+    };
+    const shine = (x, y, w, h, r) => { if (m < .05) return; const t = ((time * .55) % 1.7) - .35; c.save(); rr(c, x, y, w, h, r); c.clip(); const g = c.createLinearGradient(x + w * t, 0, x + w * (t + .25), 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, `rgba(255,255,255,${.4 * m})`); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(x, y, w, h); c.restore(); };
+    frame(0, P(0, 0, 1, .105), 8, ink);
+    frame(1, P(.02, .02, .06, .062), 99, '#ff6a3d');
+    [[.14, .1], [.26, .12], [.4, .09]].forEach(([fx, fw], i) => frame(2 + i, P(fx, .039, fw, .028), 5, '#3b4052'));
+    frame(5, P(.82, .018, .16, .07), 8, '#ff6a3d');
+    frame(6, P(.04, .2, .46, .085), 7, ink, (x, y, w, h) => shine(x, y, w, h, 7)); frame(7, P(.04, .31, .33, .085), 7, ink, (x, y, w, h) => shine(x, y, w, h, 7));
+    frame(8, P(.04, .44, .4, .034), 5, '#9ea3b6'); frame(9, P(.04, .5, .29, .034), 5, '#9ea3b6');
+    const cta = P(.04, .6, .2, .09), pulse = (time * .8) % 1;
+    frame(10, cta, 9, '#ff6a3d', (x, y, w, h) => { c.fillStyle = ink; c.globalAlpha = c.globalAlpha * .9; rr(c, x + w * .22, y + h * .38, w * .56, h * .24, h * .12); c.fill(); });
+    if (m > .05 && fa(10) > .9) { c.strokeStyle = `rgba(255,106,61,${(1 - pulse) * .7 * m})`; c.lineWidth = 2.4; rr(c, cta[0] - pulse * 9, cta[1] - pulse * 9, cta[2] + pulse * 18, cta[3] + pulse * 18, 9 + pulse * 7); c.stroke(); }
+    const hv = P(.58, .16, .4, .5);
+    frame(11, hv, 14, null, (x, y, w, h) => {
+      const g = c.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, '#ff6a3d'); g.addColorStop(1, '#2a2f45'); rr(c, x, y, w, h, 14); c.fillStyle = g; c.fill();
+      c.save(); rr(c, x, y, w, h, 14); c.clip(); const cx = x + w / 2, cy = y + h / 2, R = Math.min(w, h) * .3, a = time * 1.1 * m;
+      c.strokeStyle = 'rgba(255,255,255,.85)'; c.lineWidth = 3; c.beginPath(); c.arc(cx + Math.cos(a) * 6 * m, cy + Math.sin(a) * 6 * m, R, 0, 6.3); c.stroke();
+      c.fillStyle = '#12141c'; c.save(); c.translate(cx - R * 1.05, cy + R * .55 + Math.sin(a * 1.3) * 5 * m); c.rotate(a * .6); c.beginPath(); c.moveTo(0, -R * .42); c.lineTo(R * .4, R * .3); c.lineTo(-R * .4, R * .3); c.closePath(); c.fill(); c.restore();
+      c.fillStyle = '#ffd27a'; c.save(); c.translate(cx + R * 1.05, cy - R * .55 + Math.cos(a * 1.1) * 5 * m); c.rotate(-a * .8); c.fillRect(-R * .2, -R * .2, R * .4, R * .4); c.restore();
+      for (let i = 0; i < 6; i++) { c.fillStyle = 'rgba(255,255,255,.6)'; c.beginPath(); c.arc(x + w * .14 + (i % 3) * 11, y + h * .84 + Math.floor(i / 3) * 11, 2.4, 0, 6.3); c.fill(); }
+      c.restore();
+    });
+    const cardCols = ['#ff6a3d', '#4d9eff', '#2fc58a'];
+    for (let i = 0; i < 3; i++) {
+      const fl = Math.sin(time * 2 + i * 1.4) * 3.2 * m, base = P(.04 + i * .325, .76, .29, .21); base[1] += fl - m * 3;
+      frame(12 + i, base, 10, '#fff', (x, y, w, h) => {
+        c.strokeStyle = ink; c.lineWidth = 2; rr(c, x, y, w, h, 10); c.stroke();
+        c.fillStyle = cardCols[i]; c.beginPath(); c.arc(x + w * .16, y + h * .34, Math.min(w, h) * .15, 0, 6.3); c.fill();
+        c.fillStyle = '#c3c6d3'; rr(c, x + w * .12, y + h * .62, w * .62, h * .09, 3); c.fill(); rr(c, x + w * .12, y + h * .78, w * .4, h * .09, 3); c.fill();
+      });
+    }
+    /* المؤشر يضغط الزر في مرحلة الحركة */
+    if (m > .25) {
+      const loop = (time * .45) % 1, k1 = ease(loop / .55), px = lerp(X + CW * .62, cta[0] + cta[2] * .62, k1), py = lerp(Y + CH * .95, cta[1] + cta[3] * .6, k1), click = loop > .6 && loop < .75;
+      c.save(); c.globalAlpha = clamp((m - .25) * 3); c.translate(px, py); c.scale(click ? .85 : 1, click ? .85 : 1);
+      c.fillStyle = '#ff6a3d'; c.strokeStyle = ink; c.lineWidth = 2.4; c.lineJoin = 'round'; c.beginPath(); c.moveTo(0, 0); c.lineTo(0, 22); c.lineTo(6, 17); c.lineTo(10, 26); c.lineTo(14, 24); c.lineTo(10, 15.5); c.lineTo(18, 15.5); c.closePath(); c.fill(); c.stroke(); c.restore();
+      if (click) { c.strokeStyle = `rgba(18,20,28,${.6 * (1 - (loop - .6) / .15)})`; c.lineWidth = 2; c.beginPath(); c.arc(cta[0] + cta[2] * .62, cta[1] + cta[3] * .6, 6 + (loop - .6) / .15 * 22, 0, 6.3); c.stroke(); }
+    }
+    /* النشر: شريط يمتلئ تحت شريط النافذة ثم علامة صحّ خضراء */
+    if (dpl > 0) { c.fillStyle = '#ff6a3d'; c.fillRect(sp.x, sp.y + 26, sp.w * Math.min(1, dpl / .8), 4); }
+    c.restore();
+    if (dpl >= .98) {
+      const pop = ease((dpl - .98) / .02) + Math.sin(Math.min(1, (S.p - .98) * 40) * 3) * 0, bx = sp.x + sp.w - 34, by = sp.y + sp.h - 34;
+      c.save(); c.translate(bx, by); c.scale(.7 + .3 * pop, .7 + .3 * pop); c.fillStyle = '#2fc58a'; c.strokeStyle = '#12141c'; c.lineWidth = 3; c.beginPath(); c.arc(0, 0, 20, 0, 6.3); c.fill(); c.stroke();
+      c.strokeStyle = '#fff'; c.lineWidth = 4.2; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); c.moveTo(-8, 1); c.lineTo(-2.5, 7); c.lineTo(9, -6); c.stroke(); c.restore();
+    }
+  }
+  return {
+    destroy() { ro && ro.disconnect(); },
+    tick(dt) {
+      time += dt;
+      if (S.play) { if (S.hold > 0) { S.hold -= dt; if (S.hold <= 0) setP(0); } else { const n = S.p + dt / 15; if (n >= 1) { setP(1); S.hold = 2.2; } else setP(n); } }
+      const W = S.w, H = S.h, wide = W / H > 1.5;
+      const cp = wide ? { x: W * .025, y: H * .06, w: W * .34, h: H * .88 } : { x: W * .035, y: H * .025, w: W * .93, h: H * .29 };
+      const sp = wide ? { x: W * .41, y: H * .05, w: W * .565, h: H * .9 } : { x: W * .035, y: H * .345, w: W * .93, h: H * .63 };
+      const m = ease((S.p - .56) / .12) * (1 - ease((S.p - .985) / .015) * 0), dpl = ease((S.p - .82) / .15);
+      c.clearRect(0, 0, W, H);
+      drawCode(cp); drawSite(sp, m, S.p >= .82 ? Math.min(1, (S.p - .82) / .15) : 0);
+      /* جسيمات تنساب من الكود إلى الموقع أثناء البناء */
+      const moving = S.play || Math.abs(S.p - S.prev) > 1e-4; S.prev = S.p;
+      if (moving && S.p < .97) { S.acc += dt; while (S.acc > .07) { S.acc -= .07; S.parts.push({ t: 0, o: (Math.random() - .5) * 18, col: BPAL[Math.floor(Math.random() * 5)] }); } }
+      const x0 = wide ? cp.x + cp.w : cp.x + cp.w / 2, y0 = wide ? cp.y + cp.h * .5 : cp.y + cp.h, x1 = wide ? sp.x : sp.x + sp.w / 2, y1 = wide ? sp.y + sp.h * .5 : sp.y;
+      S.parts = S.parts.filter((q) => (q.t += dt * 1.4) < 1);
+      for (const q of S.parts) { const e = ease(q.t), x = lerp(x0, x1, e) + (wide ? 0 : q.o), y = lerp(y0, y1, e) + (wide ? q.o : 0) + Math.sin(q.t * 9) * 3; c.globalAlpha = Math.sin(q.t * Math.PI); c.fillStyle = q.col; c.beginPath(); c.arc(x, y, 3.2, 0, 6.3); c.fill(); c.globalAlpha = 1; }
+    }
+  };
+}
+
 /* ---------------------------------------- التركيب ---------------------------------------- */
 export function mountDemos(grid, t, linkOf) {
-  const d = t.demos, a = d.coffee, p = d.perfume, ch = d.choco;
+  const d = t.demos, a = d.coffee, p = d.perfume, ch = d.choco, bd = d.build;
   const range = (min, max, v, step, label) => `<input class="rng" type="range" min="${min}" max="${max}" step="${step}" value="${v}" aria-label="${esc(label)}">`;
   grid.innerHTML = `
+  <article class="demo demo-wide rv" data-k="build"><h3 class="sr">${esc(bd.t)}</h3><div class="demo-stage"><canvas aria-hidden="true"></canvas></div>
+    <div class="demo-bar"><button type="button" class="pl pl-i" aria-label="${esc(bd.play)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5v14l11-7z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+      <div class="bst-row" role="group" aria-label="${esc(bd.t)}">${['<path d="M4 5h16v4H4zM4 12h7v7H4zM14 12h6v7h-6z"/>', '<path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/>', '<path d="M6 3l12 8-5.2 1.4L10 18z"/>', '<path d="M12 3c3 2 5 5 5 9l-2 3H9l-2-3c0-4 2-7 5-9zM9 15l-2 4 3-1M15 15l2 4-3-1"/><circle cx="12" cy="10" r="1.6"/>'].map((ic, i) => `<button type="button" class="bst" aria-label="${esc(bd.stages[i])}"><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg></button>`).join('')}</div>
+      <div class="rng-w rng-build">${range(0, 100, 0, .1, bd.p)}</div></div></article>
   <article class="demo rv" data-k="coffee"><div class="demo-stage"><canvas aria-hidden="true"></canvas></div><div class="demo-body"><span class="dn">01</span><h3>${esc(a.t)}</h3><p>${esc(a.p)}</p>
     <div class="dv"><b><span class="dv-n">150</span><i>${esc(a.unit)}</i></b><span class="dv-s"></span></div>
     <div class="rng-w rng-coffee">${range(150, 240, 150, 1, a.t)}<i class="mk" style="--x:51.1%"></i><i class="mk" style="--x:82.2%"></i></div>
@@ -163,7 +283,7 @@ export function mountDemos(grid, t, linkOf) {
     <div class="dv"><b><span class="dv-n">20</span><i>${esc(ch.unit)}</i></b><span class="dv-s"></span></div>
     <div class="rng-w rng-choco">${range(20, 45, 20, .5, ch.t)}</div>
     <a class="demo-link" href="${esc(linkOf('chocolate'))}">${esc(d.see)}<span class="bi">${ICON.arrow}</span></a></div></article>`;
-  const cards = [...grid.querySelectorAll('.demo')], impl = [coffee(cards[0], a), perfume(cards[1], p), choco(cards[2], ch)], vis = [false, false, false];
+  const cards = [...grid.querySelectorAll('.demo')], impl = [build(cards[0], bd), coffee(cards[1], a), perfume(cards[2], p), choco(cards[3], ch)], vis = [false, false, false, false];
   let raf = 0, last = 0, dead = false;
   const loop = (now) => { raf = 0; if (dead || document.hidden || !vis.some(Boolean)) return; const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; impl.forEach((m, i) => vis[i] && m.tick(dt)); raf = requestAnimationFrame(loop); };
   const kick = () => { if (!raf && !dead) { last = performance.now(); raf = requestAnimationFrame(loop); } };
@@ -171,5 +291,5 @@ export function mountDemos(grid, t, linkOf) {
   let io = null;
   if ('IntersectionObserver' in window) { io = new IntersectionObserver((es) => { es.forEach((e) => { vis[cards.indexOf(e.target)] = e.isIntersecting; }); kick(); }, { rootMargin: '60px' }); cards.forEach((e) => io.observe(e)); }
   const onVis = () => { if (!document.hidden) kick(); }; document.addEventListener('visibilitychange', onVis);
-  return { destroy() { dead = true; cancelAnimationFrame(raf); io && io.disconnect(); document.removeEventListener('visibilitychange', onVis); } };
+  return { destroy() { dead = true; cancelAnimationFrame(raf); io && io.disconnect(); impl.forEach((m) => m.destroy && m.destroy()); document.removeEventListener('visibilitychange', onVis); }, running: () => !!raf };
 }

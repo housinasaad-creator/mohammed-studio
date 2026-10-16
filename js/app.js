@@ -3,6 +3,7 @@ import { CONFIG, WORKS, FEATURED, PICK } from './content.js';
 import { $, $$, esc, shell, href, waUrl, ICON, reduced, saveData, lazyMedia, tr, lang } from './shared.js';
 import { workCard } from './cards.js';
 import { mountDemos } from './demos.js';
+import { initServices } from './services.js';
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
 
@@ -15,7 +16,7 @@ function heroHtml(t) {
     const head = i === 0 ? `<h1>${esc(title)}</h1>` : `<h2>${esc(title)}</h2>`;
     const extra = i === 0 ? `<div class="h3-cta"><a class="btn btn-lg" href="#contact">${esc(t.cta)}</a><a class="btn btn-line btn-lg" href="${esc(href('projects.html'))}">${esc(h.cta2)}</a></div>`
       : i === 3 ? `<div class="chat"><div class="bub me">${esc(h.chat[0])}<i class="ticks"></i></div><div class="typing"><b></b><b></b><b></b></div><div class="bub you">${esc(h.chat[1])}</div></div><div class="h3-cta">${CONFIG.WA_NUMBER ? `<a class="btn btn-lg" href="${esc(waUrl(t.contact.waMsg))}" target="_blank" rel="noopener">${esc(t.contact.wa)}</a>` : ''}<a class="btn btn-line btn-lg" href="#contact">${esc(t.cta)}</a></div>` : '';
-    return `<div class="chap" data-i="${i}">${i === 0 ? `<p class="badge">${esc(h.badge)}</p>` : ''}<p class="ck">${esc(k)}</p>${head}<p class="cs">${esc(sub)}</p>${extra}</div>`;
+    return `<div class="chap" data-i="${i}"><p class="ck">${esc(k)}</p>${head}<p class="cs">${esc(sub)}</p>${extra}</div>`;
   }).join('');
 }
 let chaps = [], dots = [];
@@ -39,19 +40,26 @@ $('#h3Dots').addEventListener('click', (e) => {
   const total = hero.offsetHeight - stick.offsetHeight, top = hero.getBoundingClientRect().top + scrollY - $('#hdr').offsetHeight;
   scrollTo({ top: top + total * ((+b.dataset.i + .5) / N), behavior: 'smooth' });
 });
+let heroNear = false, loaded = document.readyState === 'complete', starting = false;
 function startHero3d() {
-  if (reduced || h3d || !hero) return;
-  const canvas = $('#stage');
+  if (reduced || h3d || starting || !hero || !heroNear) return; starting = true;
+  let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
   import('./hero3d.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || (navigator.hardwareConcurrency || 8) <= 4, saveData, onReady: () => stick.classList.add('on3d') }))
-    .then((h) => { h3d = h; h.setChat(tr().hero.chat); h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); });
+    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
 }
 if (!reduced) {
-  const go = () => (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700));
-  if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
+  const go = () => { loaded = true; (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700)); };
+  if (loaded) go(); else addEventListener('load', go, { once: true });
 }
 if ('IntersectionObserver' in window) {
   new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; h3d && h3d.setActive(heroOn); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
-}
+  /* بعيداً عن الهيرو بأكثر من شاشتين ونصف: يُفرَّغ المشهد كله (سياق الرسم والفيديو)، ويعود حين نقترب */
+  new IntersectionObserver(([e]) => {
+    heroNear = e.isIntersecting;
+    if (!heroNear && h3d) { h3d.dispose(); h3d = null; stick.classList.remove('on3d'); }
+    else if (heroNear && !h3d && loaded && !reduced) startHero3d();
+  }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
+} else { heroNear = true; }
 
 /* ---------------- ما نشاطك؟ يقترح نوع الموقع ويفتح واتساب برسالة جاهزة؛ يتنقّل وحده حتى يضغط الزائر ---------------- */
 let pickI = 0, pickAuto = !reduced, pickOn = false;
@@ -89,7 +97,7 @@ function codeHtml(n) { let left = n, out = ''; for (const [s, c] of tokens) { if
 }
 
 /* ---------------- رسم المحتوى ---------------- */
-let demos = null;
+let demos = null; const svc = initServices();
 function render(t, lg) {
   chaps = []; $('#h3Copy').innerHTML = heroHtml(t); chaps = $$('.chap');
   $('#h3Dots').innerHTML = Array.from({ length: N }, (_, i) => `<li><button type="button" data-i="${i}" tabindex="-1" aria-label="${i + 1}"></button></li>`).join(''); dots = $$('#h3Dots button');
@@ -100,7 +108,7 @@ function render(t, lg) {
   $('#fKicker').textContent = f.kicker; $('#fH2').textContent = f.h2;
   $('#fList').innerHTML = FEATURED.map((id, i) => workCard(byId[id], t, i)).join(''); $('#fMore').innerHTML = `${esc(f.more)}<span class="bi">${ICON.arrow}</span>`; $('#fMore').href = href('projects.html');
   const d = t.demos; $('#dKicker').textContent = d.kicker; $('#dH2').textContent = d.h2; $('#dSub').textContent = d.sub;
-  demos && demos.destroy(); demos = mountDemos($('#dGrid'), t, (id) => href('work.html', { id }));
+  demos && demos.destroy(); demos = mountDemos($('#dGrid'), t, (id) => href('work.html', { id })); window.__demos = demos;
   const y = t.why; $('#yKicker').textContent = y.kicker; $('#yH2').textContent = y.h2;
   $('#yTable').innerHTML = `<div class="why-head" role="row"><span role="columnheader"></span><b role="columnheader">${esc(y.cols[0])}</b><b class="us" role="columnheader">${esc(y.cols[1])}</b></div>`
     + y.rows.map(([a, b, c]) => `<div class="why-row" role="row"><h3 role="rowheader">${esc(a)}</h3><p class="oth" role="cell" data-c="${esc(y.cols[0])}">${esc(b)}</p><p class="us" role="cell" data-c="${esc(y.cols[1])}"><i>${ICON.check}</i><span>${esc(c)}</span></p></div>`).join('');
@@ -108,7 +116,7 @@ function render(t, lg) {
   const c0 = t.prog; $('#cdKicker').textContent = c0.kicker; $('#cdH2').textContent = c0.h2; $('#cdSub').textContent = c0.sub;
   $('#cdPts').innerHTML = c0.points.map((x) => `<li><i>${ICON.check}</i><span>${esc(x)}</span></li>`).join(''); $('#cdChips').innerHTML = c0.chips.map((x) => `<span>${esc(x)}</span>`).join('');
   const s = t.services; $('#sKicker').textContent = s.kicker; $('#sH2').textContent = s.h2;
-  $('#sList').innerHTML = s.items.map(([n, dd], i) => `<li class="rv" style="--d:${i * .06}s"><h3>${esc(n)}</h3><p>${esc(dd)}</p></li>`).join('');
+  svc.render(t);
   const p = t.steps; $('#pKicker').textContent = p.kicker; $('#pH2').textContent = p.h2; $('#pPromise').textContent = p.promise;
   $('#pList').innerHTML = p.items.map(([n, dd], i) => `<li class="rv" style="--d:${i * .07}s"><h3>${esc(n)}</h3><p>${esc(dd)}</p></li>`).join('');
   const ab = t.about; $('#aKicker').textContent = ab.kicker; $('#aH2').textContent = ab.h2; $('#aText').innerHTML = ab.p.map((x) => `<p>${esc(x)}</p>`).join('');

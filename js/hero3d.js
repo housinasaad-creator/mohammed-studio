@@ -181,7 +181,8 @@ export async function createHero({ canvas, lite = false, saveData = false, onRea
 
   /* ---------------- حلقة الرسم ---------------- */
   let raf = 0, last = 0, ft = [], chatT = 0;
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches) addEventListener('pointermove', (e) => { state.mx = e.clientX / innerWidth - .5; state.my = e.clientY / innerHeight - .5; }, { passive: true });
+  const onMove = (e) => { state.mx = e.clientX / innerWidth - .5; state.my = e.clientY / innerHeight - .5; };
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) addEventListener('pointermove', onMove, { passive: true });
   function frame(now) {
     raf = 0; if (!state.active) return; raf = requestAnimationFrame(frame);
     const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; state.t += dt; const t = state.t;
@@ -218,9 +219,16 @@ export async function createHero({ canvas, lite = false, saveData = false, onRea
     setActive(on) { if (on === state.active && (raf || !on)) return; state.active = on; if (on) { last = performance.now(); raf = raf || requestAnimationFrame(frame); vids[state.clipSlot].src && vids[state.clipSlot].play().catch(() => {}); } else vids.forEach((v) => v.pause()); },
     setChat(texts) { chatTexts = texts; if (state.phIdx === 3) paintChat(Math.max(0, chatStep)); else chatStep = -1; },
     resize,
-    dispose() { state.active = false; cancelAnimationFrame(raf); renderer.dispose(); }
+    /* يحرّر كل شيء (سياق WebGL والقوام والفيديو) حين يبتعد الزائر عن الهيرو كثيراً */
+    dispose() {
+      state.dead = true; state.active = false; cancelAnimationFrame(raf); raf = 0; removeEventListener('pointermove', onMove);
+      vids.forEach((v) => { v.pause(); v.removeAttribute('src'); v.load(); }); vtex.forEach((t) => t.dispose());
+      Object.values(phoneTex).forEach((t) => t.dispose()); chat.tex.dispose(); kb.tex.dispose(); shTex.dispose();
+      scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); const m = o.material; if (m) (Array.isArray(m) ? m : [m]).forEach((x) => x.dispose()); });
+      scene.environment && scene.environment.dispose(); renderer.dispose(); renderer.forceContextLoss(); if (window.__hero === api) window.__hero = null;
+    }
   };
   setClip(0); raf = requestAnimationFrame(frame); window.__hero = api;
-  ready.then(() => { state.ready = true; onReady && onReady(); });
+  ready.then(() => { if (state.dead) return; state.ready = true; onReady && onReady(); });
   return api;
 }

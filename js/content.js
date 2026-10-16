@@ -29,7 +29,7 @@ export const WORKS = [
   { id: 'hazem', group: 'show', year: 2026, url: 'https://housinasaad-creator.github.io/hazem-driving-school/', tags: ['5 languages', 'Video hero'] }
 ];
 /* المشاريع المعروضة في الصفحة الرئيسية قبل زر "المزيد" */
-export const FEATURED = ['chocolate', 'perfume'];
+export const FEATURED = ['mozaik', 'chocolate'];
 
 /* أنشطة "ما نشاطك؟": ex = مثال حقيقي من أعمالنا (يُعرض فقط حيث يوجد مثال مناسب) */
 export const PICK = [
@@ -51,7 +51,6 @@ export const T = {
     nav: { works: 'مشاريعي', why: 'لماذا نحن', services: 'ما نقدّمه', about: 'من نحن', contact: 'تواصل' },
     cta: 'اطلب موقعك', up: 'إلى أعلى الصفحة', menu: 'القائمة',
     hero: {
-      badge: 'عرض الإطلاق: أول 5 عملاء بشروط خاصة حتى 31 أكتوبر',
       scroll: 'مرّر لتستكشف', cta2: 'شاهد مشاريعي',
       ch: [
         ['استوديو ويب · غازي عنتاب', 'موقعٌ يجعل الناس تتوقف لتنظر.', 'تصميم خاص وحركة حقيقية وثلاثي الأبعاد، يُبنى بسرعة ويعمل بسلاسة على الجوال والكمبيوتر.'],
@@ -93,7 +92,8 @@ export const T = {
       }
     },
     demos: {
-      kicker: 'حركة تبيع', h2: 'جرّب الحركات بنفسك', sub: 'ثلاث عيّنات صغيرة من الحركات التي نبنيها لمواقعنا. اسحب واضغط وشاهد الفرق.',
+      kicker: 'حركة تبيع', h2: 'جرّب الحركات بنفسك', sub: 'أربع عيّنات صغيرة من الحركات التي نبنيها لمواقعنا. اسحب واضغط وشاهد الفرق.',
+      build: { t: 'من الكود إلى موقع حيّ', p: 'اسحب المنزلق لترى الموقع يُبنى مرحلة بعد مرحلة', stages: ['الهيكل', 'الألوان', 'الحركة', 'النشر'], play: 'تشغيل', pause: 'إيقاف' },
       coffee: { t: 'حمّصها', p: 'اسحب الحرارة وشاهد الحبّة تتغيّر.', unit: '°م', stages: ['أخضر', 'أصفر', 'قرفي', 'مدينة', 'مدينة كاملة', 'داكن'], c1: 'الطقطقة الأولى', c2: 'الطقطقة الثانية' },
       perfume: { t: 'اثنتا عشرة ساعة على الجلد', p: 'اضغط تشغيل وشاهد العطر يفتح ويتفتّح ويستقر.', play: 'تشغيل', pause: 'إيقاف', notes: ['الرأس: زعفران وبرغموت', 'القلب: ورد وعود', 'القاعدة: عنبر ومسك'], hours: 'ساعة' },
       choco: { t: 'ذوّبها', p: 'سخّن الغرفة وشاهد الشوكولا تستسلم.', unit: '°م', states: ['طقطقة مثالية', 'تلين', 'تذوب'] },
@@ -165,7 +165,6 @@ export const T = {
     nav: { works: 'My projects', why: 'Why us', services: 'What we do', about: 'About', contact: 'Contact' },
     cta: 'Get your website', up: 'Back to top', menu: 'Menu',
     hero: {
-      badge: 'Launch offer: the first 5 clients, special terms until October 31',
       scroll: 'Scroll to explore', cta2: 'See my projects',
       ch: [
         ['Web studio · Gaziantep', 'A website that makes people stop and look.', 'Custom design, real motion and 3D, built fast and smooth for phones and desktops.'],
@@ -207,7 +206,8 @@ export const T = {
       }
     },
     demos: {
-      kicker: 'Motion that sells', h2: 'Try the animations yourself', sub: 'Three small samples of the kind of motion we build for our sites. Drag, press play and feel the difference.',
+      kicker: 'Motion that sells', h2: 'Try the animations yourself', sub: 'Four small samples of the kind of motion we build for our sites. Drag, press play and feel the difference.',
+      build: { t: 'From code to a live site', p: 'Drag the slider and watch the site get built, stage by stage', stages: ['Structure', 'Colour', 'Motion', 'Publish'], play: 'Play', pause: 'Pause' },
       coffee: { t: 'Roast it', p: 'Drag the temperature and watch the bean change.', unit: '°C', stages: ['Green', 'Yellow', 'Cinnamon', 'City', 'Full city', 'Dark'], c1: 'First crack', c2: 'Second crack' },
       perfume: { t: 'Twelve hours on skin', p: 'Press play and watch the scent open, bloom and settle.', play: 'Play', pause: 'Pause', notes: ['Top: saffron and bergamot', 'Heart: rose and oud', 'Base: amber and musk'], hours: 'h' },
       choco: { t: 'Melt it', p: 'Warm the room and watch the chocolate give in.', unit: '°C', states: ['Perfect snap', 'Softening', 'Melting'] },
@@ -279,7 +279,6 @@ export const T = {
     nav: { works: 'Projelerim', why: 'Neden biz', services: 'Neler yapıyoruz', about: 'Hakkımızda', contact: 'İletişim' },
     cta: 'Sitenizi isteyin', up: 'Yukarı çık', menu: 'Menü',
     hero: {
-      badge: "Lansman teklifi: ilk 5 müşteriye 31 Ekim'e kadar özel şartlar",
       scroll: 'Keşfetmek için kaydırın', cta2: 'Projelerimi görün',
       ch: [
         ['Web stüdyosu · Gaziantep', 'İnsanları durdurup baktıran bir web sitesi.', 'Özel tasarım, gerçek hareket ve 3D; hızlı kurulur, telefonda ve bilgisayarda akıcı çalışır.'],
@@ -321,7 +320,8 @@ export const T = {
       }
     },
     demos: {
-      kicker: 'Satan hareket', h2: 'Animasyonları kendiniz deneyin', sub: 'Sitelerimiz için yaptığımız hareketlerden üç küçük örnek. Sürükleyin, oynatın ve farkı görün.',
+      kicker: 'Satan hareket', h2: 'Animasyonları kendiniz deneyin', sub: 'Sitelerimiz için yaptığımız hareketlerden dört küçük örnek. Sürükleyin, oynatın ve farkı görün.',
+      build: { t: 'Koddan canlı siteye', p: 'Kaydırıcıyı sürükleyin, sitenin aşama aşama kurulduğunu izleyin', stages: ['Yapı', 'Renk', 'Hareket', 'Yayın'], play: 'Oynat', pause: 'Durdur' },
       coffee: { t: 'Kavurun', p: 'Sıcaklığı sürükleyin, çekirdeğin değişimini izleyin.', unit: '°C', stages: ['Yeşil', 'Sarı', 'Tarçın', 'City', 'Full city', 'Koyu'], c1: 'Birinci çatlama', c2: 'İkinci çatlama' },
       perfume: { t: 'Ciltte on iki saat', p: 'Oynata basın; koku açılıyor, çiçek açıyor ve yerleşiyor.', play: 'Oynat', pause: 'Durdur', notes: ['Üst: safran ve bergamot', 'Kalp: gül ve ud', 'Taban: amber ve misk'], hours: 's' },
       choco: { t: 'Eritin', p: 'Odayı ısıtın, çikolatanın teslim oluşunu izleyin.', unit: '°C', states: ['Mükemmel çıtırtı', 'Yumuşuyor', 'Eriyor'] },

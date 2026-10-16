@@ -1,4 +1,6 @@
 /* صفحة تعريف الاستوديو: خفيفة وسريعة، ورقي دافئ + حبر + مرجاني، تباين عالٍ. التخطيط LTR دائماً (لا ينعكس بالعربية)؛ النص العربي يُرتَّب يمين-يسار داخل كتلته */
+/* ألواننا كما صُمِّمت حتى لو فعّل الزائر الوضع الليلي للمواقع في متصفحه */
+:root { color-scheme: only light; }
 :root {
   --paper: #f7f4ee; --paper2: #eee9de; --ink: #12141c; --ink2: #1b1f2c; --text2: #363b4e; --muted: #565b70;
   --coral: #ff6a3d; --coral-d: #a8330b; --card: #fff; --line: rgba(18, 20, 28, .13);
@@ -24,7 +26,7 @@ button { font: inherit; color: inherit; }
 .sec-ink :focus-visible, .sec-contact :focus-visible, .hdr :focus-visible { outline-color: var(--coral); }
 section[id] { scroll-margin-top: calc(var(--hdr) - 4px); }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; border: 2px solid var(--ink); font-weight: 700; padding: 12px 26px; border-radius: 12px; color: var(--ink); background: var(--coral); box-shadow: 4px 4px 0 var(--ink); transition: transform .2s var(--ease), box-shadow .2s var(--ease); white-space: nowrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 2px solid var(--ink); font-weight: 700; padding: 12px 26px; border-radius: 12px; color: var(--ink); background: var(--coral); box-shadow: 4px 4px 0 var(--ink); transition: transform .2s var(--ease), box-shadow .2s var(--ease); white-space: nowrap; }
 .btn:hover { transform: translate(2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
 .btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 var(--ink); }
 .btn-sm { padding: 8px 18px; font-size: .92rem; box-shadow: 3px 3px 0 var(--ink); }
@@ -136,7 +138,7 @@ h2 { font-size: clamp(1.8rem, 3.6vw, 2.7rem); line-height: 1.22; font-weight: 70
 .wa-fab { transition: opacity .35s var(--ease), translate .35s var(--ease); }
 #waFab.hide-wa .wa-fab { opacity: 0; translate: 0 24px; pointer-events: none; }
 /* زر الصعود إلى أعلى الصفحة: فوق زر واتساب مباشرة، يظهر بعد التمرير */
-.up-fab { width: 50px; height: 50px; margin-inline-end: 8px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: var(--ink); color: var(--on-ink); border: 3px solid var(--on-ink); box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 3px var(--coral); opacity: 0; translate: 0 18px; scale: .8; pointer-events: none !important; transition: opacity .3s var(--ease), translate .3s var(--ease), scale .3s var(--ease), box-shadow .2s var(--ease); }
+.up-fab { width: 50px; height: 50px; margin-inline-end: 8px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--on-ink); border: 3px solid var(--on-ink); box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 3px var(--coral); opacity: 0; translate: 0 18px; scale: .8; pointer-events: none !important; transition: opacity .3s var(--ease), translate .3s var(--ease), scale .3s var(--ease), box-shadow .2s var(--ease); }
 .up-fab svg { width: 22px; height: 22px; }
 .up-fab.show { opacity: 1; translate: 0 0; scale: 1; pointer-events: auto !important; }
 .up-fab:hover { box-shadow: 0 0 0 3px var(--ink), 6px 6px 0 3px var(--coral); translate: -2px -2px; } .up-fab:active { translate: 1px 1px; }
@@ -168,7 +170,7 @@ h2 { font-size: clamp(1.8rem, 3.6vw, 2.7rem); line-height: 1.22; font-weight: 70
 /* مبدّل اللغة AR · EN · TR: قرص مرجاني بنابض، حرف يُقلَب، ودائرة تتسع من مكان الضغط عند تبديل الصفحة */
 .langs { position: relative; display: flex; padding: 3px; border: 1.5px solid rgba(255, 255, 255, .3); border-radius: 13px; background: rgba(255, 255, 255, .06); }
 .langs .thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: 40px; border-radius: 10px; background: var(--coral); translate: calc(var(--i, 0) * 40px) 0; transition: translate .6s cubic-bezier(.34, 1.7, .5, 1); }
-.langs button { position: relative; z-index: 1; width: 40px; height: 30px; border: 0; background: transparent; cursor: pointer; font-weight: 700; font-size: .8rem; letter-spacing: .06em; color: var(--on-ink2); border-radius: 10px; transition: color .25s; }
+.langs button { position: relative; z-index: 1; width: 40px; height: 30px; border: 0; background: transparent; font-weight: 700; font-size: .8rem; letter-spacing: .06em; color: var(--on-ink2); border-radius: 10px; transition: color .25s; }
 .langs button:hover { color: var(--on-ink); } .langs button.on { color: var(--ink); }
 .langs button.flip { animation: flipc .55s var(--ease); }
 @keyframes flipc { 0% { transform: perspective(160px) rotateX(0); } 45% { transform: perspective(160px) rotateX(-90deg); } 55% { transform: perspective(160px) rotateX(90deg); } 100% { transform: perspective(160px) rotateX(0); } }
@@ -184,7 +186,7 @@ h2 { font-size: clamp(1.8rem, 3.6vw, 2.7rem); line-height: 1.22; font-weight: 70
 .pick-l { padding: 40px 42px 38px; } .pick-l .kicker { color: var(--coral); } .pick-l h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); }
 .pick-sub { margin-top: 10px; color: var(--on-ink2); text-wrap: pretty; }
 .pchips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
-.pchips button { cursor: pointer; border: 2px solid rgba(255, 255, 255, .3); border-radius: 999px; padding: 9px 18px; font-weight: 600; font-size: .98rem; background: transparent; color: var(--on-ink); transition: transform .2s var(--ease), border-color .2s, background .2s, color .2s; }
+.pchips button { border: 2px solid rgba(255, 255, 255, .3); border-radius: 999px; padding: 9px 18px; font-weight: 600; font-size: .98rem; background: transparent; color: var(--on-ink); transition: transform .2s var(--ease), border-color .2s, background .2s, color .2s; }
 .pchips button:hover { border-color: var(--coral); transform: translateY(-2px); }
 .pchips button.on { background: var(--coral); border-color: var(--coral); color: var(--ink); }
 .pick-r { padding: 38px 40px; background: var(--ink2); border-inline-start: 1px solid rgba(255, 255, 255, .12); display: flex; flex-direction: column; gap: 12px; min-height: 360px; }
@@ -238,7 +240,7 @@ main { animation: pagein .55s var(--ease) both; }
 /* الرأس: بنود تتبع الصفحة، وقائمة الجوال */
 .nav .nav-cta { display: none; }
 .nav a[aria-current="page"] { color: var(--on-ink); background: rgba(255, 255, 255, .1); }
-.menu-btn { display: none; width: 44px; height: 44px; border: 1.5px solid rgba(255, 255, 255, .3); border-radius: 12px; background: rgba(255, 255, 255, .06); cursor: pointer; padding: 0; position: relative; }
+.menu-btn { display: none; width: 44px; height: 44px; border: 1.5px solid rgba(255, 255, 255, .3); border-radius: 12px; background: rgba(255, 255, 255, .06); padding: 0; position: relative; }
 .menu-btn i { position: absolute; left: 12px; right: 12px; height: 2.5px; border-radius: 2px; background: var(--on-ink); transition: transform .3s var(--ease), opacity .2s; }
 .menu-btn i:nth-child(1) { top: 14px; } .menu-btn i:nth-child(2) { top: 20.5px; } .menu-btn i:nth-child(3) { top: 27px; }
 .hdr.open .menu-btn i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); } .hdr.open .menu-btn i:nth-child(2) { opacity: 0; } .hdr.open .menu-btn i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
