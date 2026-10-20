@@ -167,6 +167,29 @@ export const CASES = {
     }
   },
 
+  verdara: {
+    langs: 'TR · EN · FR · AR', stack: [...WEB, 'three.js'],
+    desk: [['verdara-1', 'motion'], ['verdara-2', 'model'], ['verdara-3', 'model'], ['verdara-4', 'ui'], ['verdara-5', 'ui'], ['verdara-6', 'ui']],
+    ph: ['verdara-m1', 'verdara-m2'],
+    t: {
+      ar: {
+        about: ['معرض لأنواع البذور والحبوب لشركة بذور بالجملة، مبني بثلاثي الأبعاد: تبدأ الرحلة ببذرة في العتمة، ومع التمرير تنفتح وتنزل جذورها ويخرج ساقها وتنتهي بحصاد، والسماء خلفها تتغيّر مع شهر السنة.', 'ثم كتالوج من 427 صنفاً في 11 مجموعة، وقائمة «أصناف الموسم» تتبدّل مع الشهر ومنطقة المناخ، وأداة لاختيار الصنف بثلاث لمسات، وطلب سعر يصل إلى واتساب. بأربع لغات. ما زال قيد العمل، والأسماء والأصناف مؤقتة.'],
+        hl: ['بذرة تنمو مع التمرير حتى الحصاد', 'كتالوج من 427 صنفاً في 11 مجموعة', 'قائمة تتبدّل مع شهر السنة ومنطقة المناخ', 'أربع لغات وطلب سعر عبر واتساب'],
+        cap: ['بداية الرحلة: بذرة في العتمة قبل أن ينفتح المشهد', 'مع التمرير: تنزل الجذور ويخرج الساق الأول', 'الحصاد: نبتة مكتملة بثمارها، وسماؤها تتبع شهر السنة', 'مجموعات المنتجات: أحد عشر قسماً، تحت كل واحد منها عدد أصنافه', 'أصناف الموسم: القائمة تتغيّر مع الشهر، وكل عبوة بشارة «اِزرع الآن»', 'أداة اختيار الصنف: المجموعة والبيئة والموسم، فتبقى الأصناف المناسبة فقط']
+      },
+      en: {
+        about: ['A showcase of seeds and grains for a wholesale seed company, built in 3D: the journey starts with a seed in the dark, and as you scroll it opens, sends roots down, puts up a shoot and ends in a harvest, while the sky behind it follows the month of the year.', 'Then a catalogue of 427 varieties in 11 groups, a “varieties of the season” list that changes with the month and climate zone, a three-tap variety finder and a price request that lands in WhatsApp. In four languages. Still being built; names and varieties are placeholders.'],
+        hl: ['A seed that grows as you scroll, to harvest', 'A catalogue of 427 varieties in 11 groups', 'A list that follows the month and climate zone', 'Four languages and price requests over WhatsApp'],
+        cap: ['The start of the journey: a seed in the dark before the scene opens', 'As you scroll: the roots go down and the first shoot comes up', 'The harvest: a full plant with its fruit, under a sky that follows the month', 'Product groups: eleven sections, each with its variety count', 'Varieties of the season: the list changes with the month, each pack carries a “sow now” badge', 'The variety finder: group, growing setup and season, leaving only the matching varieties']
+      },
+      tr: {
+        about: ['Toptan tohum şirketi için tohum ve tahıl vitrini, 3D olarak kuruldu: yolculuk karanlıkta bir tohumla başlar; kaydırdıkça tohum açılır, kökler iner, filiz çıkar ve hasatla biter; arkadaki gökyüzü yılın ayını izler.', 'Ardından 11 grupta 427 çeşitlik katalog, aya ve iklim bölgesine göre değişen “mevsimin çeşitleri” listesi, üç dokunuşla çeşit bulucu ve WhatsApp’a düşen fiyat talebi var. Dört dilli. Hâlâ yapım aşamasında; isimler ve çeşitler geçicidir.'],
+        hl: ['Kaydırdıkça hasada büyüyen tohum', '11 grupta 427 çeşitlik katalog', 'Aya ve iklim bölgesine göre değişen liste', 'Dört dil ve WhatsApp’tan fiyat talebi'],
+        cap: ['Yolculuğun başı: sahne açılmadan önce karanlıkta bir tohum', 'Kaydırdıkça: kökler iner, ilk filiz çıkar', 'Hasat: meyvesiyle tam bir bitki, gökyüzü yılın ayını izler', 'Ürün grupları: on bir bölüm, her birinin çeşit sayısıyla', 'Mevsimin çeşitleri: liste aya göre değişir, her pakette “şimdi ekin” rozeti', 'Çeşit bulucu: grup, yetiştirme ve mevsim seçilir, yalnızca uygun çeşitler kalır']
+      }
+    }
+  },
+
   hayyak: {
     langs: 'AR · TR · EN', stack: [...WEB, 'three.js'],
     desk: [['hayyak-1', 'motion'], ['hayyak-2', 'model'], ['hayyak-3', 'motion'], ['hayyak-4', 'model'], ['hayyak-5', 'model'], ['hayyak-6', 'motion']],
@@ -246,6 +269,7 @@ const CUR = {
   packaging: [['packaging-c1', { ar: 'اختيار نوع الفلوت BC فيتبدّل المقطع العرضي', en: 'Choosing the BC flute type changes the cross-section', tr: 'BC oluk tipini seçmek kesiti değiştirir' }], ['packaging-c2', { ar: 'استوديو العلب: اختر نوع العلبة فيُرسَم القالب بمقاساتك', en: 'Box Studio: pick a box style and the die-line is drawn to your size', tr: 'Kutu Stüdyosu: kutu tipini seç, kalıp ölçüne göre çizilsin' }]],
   english: [['english-c1', { ar: 'الضغط على Present Simple في القائمة الجانبية يفتح الدرس', en: 'Clicking Present Simple in the side list opens the lesson', tr: 'Yan listeden Present Simple’a tıklamak dersi açar' }], ['english-c2', { ar: 'تبويب Questions: صيغة السؤال مع جدول', en: 'The Questions tab: the question form with a table', tr: 'Questions sekmesi: soru kalıbı ve tablo' }]],
   tekton: [['tekton-c1', { ar: 'المؤشر فوق أسطوانتي الخرسانة في مختبر المعالجة', en: 'The cursor over the two concrete cylinders in the curing lab', tr: 'Kür laboratuvarında iki beton silindirin üzerinde imleç' }], ['tekton-c2', { ar: 'زرّ «ابدأ مشروعك» في الخاتمة', en: 'The “start your project” button in the finale', tr: 'Finaldeki “projeni başlat” düğmesi' }]],
+  verdara: [['verdara-c1', { ar: 'اختيار مجموعة في أداة الأصناف: تبقى الأصناف المطابقة فقط', en: 'Picking a group in the variety finder: only matching varieties remain', tr: 'Çeşit bulucuda bir grup seçmek: yalnızca eşleşen çeşitler kalır' }], ['verdara-c2', { ar: 'أسهم شريط أصناف الموسم تقلّب العبوات', en: 'The arrows of the season rail flip through the packs', tr: 'Mevsim şeridinin okları paketleri çevirir' }]],
   khayt: [['khayt-c1', { ar: 'اختيار لون القطعة بالضغط على عيّنته', en: 'Picking a colour by clicking its swatch', tr: 'Rengi örneğine tıklayarak seçmek' }]],
   hazem: [['hazem-c1', { ar: 'قائمة اللغات الخمس مفتوحة', en: 'The menu with the five languages', tr: 'Beş dilin menüsü' }]],
   hayyak: [['hayyak-c1', { ar: 'الضيافة: المؤشر عند زرّ «هزّ الفنجان» الذي ينهي الرحلة', en: 'The hospitality ritual: the cursor at the “shake the cup” button that ends the journey', tr: 'Misafirlik töreni: yolculuğu bitiren “fincanı salla” düğmesinde imleç' }]]
