@@ -4,12 +4,13 @@ import { $, $$, esc, shell, href, waUrl, ICON, reduced, saveData, lazyMedia, tr,
 import { workCard } from './cards.js';
 import { mountDemos } from './demos.js';
 import { initServices } from './services.js';
+import { initHeroVideo } from './hero-video.js';
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
 
-/* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
-const hero = $('#top'), stick = $('#stick'), N = 4;
-let heroP = 0, h3d = null, heroOn = true;
+/* ---------------- الهيرو: فيديو الكيبورد بأربع تمريرات + فصول نصية تتبدّل مع المحطات ---------------- */
+const hero = $('#top'), stick = $('#stick'), STG = 5;      // خمس محطات = البداية + أربع تمريرات (الفيديو يقف عند كل واحدة)
+let heroP = 0, hv = null, heroNear = false, heroOn = true;
 function heroHtml(t) {
   const h = t.hero;
   return h.ch.map(([k, title, sub], i) => {
@@ -23,43 +24,28 @@ let chaps = [], dots = [];
 function heroLayout() {
   const hdr = $('#hdr').offsetHeight, total = Math.max(1, hero.offsetHeight - stick.offsetHeight);
   heroP = reduced ? 0 : clamp(-(hero.getBoundingClientRect().top - hdr) / total);
+  const pos = heroP * (STG - 1);                                   // 0..4: يمرّ بالمحطات كأعداد صحيحة
   chaps.forEach((c, i) => {
-    const q = heroP * N - i, inn = i === 0 ? 1 : smooth(q / .16), out = i === N - 1 ? 1 : smooth((1 - q) / .16), o = Math.min(inn, out);
+    const inn = i === 0 ? 1 : smooth((pos - (i - .65)) / .3), out = i === chaps.length - 1 ? 1 : 1 - smooth((pos - (i + .35)) / .3), o = Math.min(inn, out);
     c.style.opacity = reduced ? '' : o.toFixed(3); c.style.transform = reduced ? '' : `translate3d(0,${((1 - inn) * 34 - (1 - out) * 34).toFixed(1)}px,0)`;
     const on = o > .5 || reduced; c.classList.toggle('on', on); c.style.pointerEvents = on ? 'auto' : 'none'; c.inert = !on;
   });
-  const ai = clamp(Math.floor(heroP * N), 0, N - 1);
+  const ai = clamp(Math.round(pos), 0, STG - 1);
   dots.forEach((d, i) => d.classList.toggle('on', i === ai));
   $('#h3Hint').classList.toggle('gone', heroP > .02);
-  h3d && h3d.setProgress(heroP);
 }
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
-addEventListener('resize', () => { heroLayout(); h3d && h3d.resize(); }, { passive: true });
-$('#h3Dots').addEventListener('click', (e) => {
-  const b = e.target.closest('button'); if (!b || reduced) return;
-  const total = hero.offsetHeight - stick.offsetHeight, top = hero.getBoundingClientRect().top + scrollY - $('#hdr').offsetHeight;
-  scrollTo({ top: top + total * ((+b.dataset.i + .5) / N), behavior: 'smooth' });
-});
-let heroNear = false, loaded = document.readyState === 'complete', starting = false;
-function startHero3d() {
-  if (reduced || h3d || starting || !hero || !heroNear) return; starting = true;
-  let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
-  import('./hero3d.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || (navigator.hardwareConcurrency || 8) <= 4, saveData, onReady: () => stick.classList.add('on3d') }))
-    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
+addEventListener('resize', () => { heroLayout(); }, { passive: true });
+$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !hv) return; hv.jump(+b.dataset.i); });
+{
+  hv = initHeroVideo({ hero, stick, video: $('#hv'), hdr: () => $('#hdr').offsetHeight, reduced, saveData });
+  const go = () => { (window.requestIdleCallback ? requestIdleCallback(() => heroNear && hv.load(), { timeout: 1500 }) : setTimeout(() => heroNear && hv.load(), 500)); };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; if (!heroOn) hv.pause(); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
+    /* بعيداً عن الهيرو بأكثر من شاشتين ونصف: يُفرَّغ الفيديو من الذاكرة، ويعود حين نقترب */
+    new IntersectionObserver(([e]) => { heroNear = e.isIntersecting; if (!heroNear) hv.unload(); else go(); }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
+  } else { heroNear = true; go(); }
 }
-if (!reduced) {
-  const go = () => { loaded = true; (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700)); };
-  if (loaded) go(); else addEventListener('load', go, { once: true });
-}
-if ('IntersectionObserver' in window) {
-  new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; h3d && h3d.setActive(heroOn); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
-  /* بعيداً عن الهيرو بأكثر من شاشتين ونصف: يُفرَّغ المشهد كله (سياق الرسم والفيديو)، ويعود حين نقترب */
-  new IntersectionObserver(([e]) => {
-    heroNear = e.isIntersecting;
-    if (!heroNear && h3d) { h3d.dispose(); h3d = null; stick.classList.remove('on3d'); }
-    else if (heroNear && !h3d && loaded && !reduced) startHero3d();
-  }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
-} else { heroNear = true; }
 
 /* ---------------- ما نشاطك؟ يقترح نوع الموقع ويفتح واتساب برسالة جاهزة؛ يتنقّل وحده حتى يضغط الزائر ---------------- */
 let pickI = 0, pickAuto = !reduced, pickOn = false;
@@ -100,7 +86,7 @@ function codeHtml(n) { let left = n, out = ''; for (const [s, c] of tokens) { if
 let demos = null; const svc = initServices();
 function render(t, lg) {
   chaps = []; $('#h3Copy').innerHTML = heroHtml(t); chaps = $$('.chap');
-  $('#h3Dots').innerHTML = Array.from({ length: N }, (_, i) => `<li><button type="button" data-i="${i}" tabindex="-1" aria-label="${i + 1}"></button></li>`).join(''); dots = $$('#h3Dots button');
+  $('#h3Dots').innerHTML = Array.from({ length: STG }, (_, i) => `<li><button type="button" data-i="${i}" tabindex="-1" aria-label="${i + 1}"></button></li>`).join(''); dots = $$('#h3Dots button');
   $('#h3Hint').textContent = t.hero.scroll;
   const k = t.pick; $('#kKicker').textContent = k.kicker; $('#kH2').textContent = k.h2; $('#kSub').textContent = k.sub;
   $('#kChips').innerHTML = PICK.map((p, i) => `<button type="button" data-i="${i}">${esc(k.items[p.id][0])}</button>`).join(''); pickOut();
@@ -127,7 +113,6 @@ function render(t, lg) {
     + `<a class="btn btn-lg btn-line" href="${esc(CONFIG.INSTAGRAM)}" target="_blank" rel="noopener"><span class="bi">${ICON.ig}</span><span dir="ltr">${esc(CONFIG.INSTAGRAM_SHOW)}</span></a>`
     + `<a class="btn btn-lg btn-line" href="${esc(CONFIG.LINKEDIN)}" target="_blank" rel="noopener"><span class="bi">${ICON.li}</span>${esc(c.linkedin)}</a>`;
   $('#cTel').innerHTML = CONFIG.WA_NUMBER ? `<a dir="ltr" href="${esc(wu)}" target="_blank" rel="noopener">${esc(CONFIG.WA_SHOW)}</a>` : '';
-  h3d && h3d.setChat(t.hero.chat);
   heroLayout();
 }
 shell({ active: '', render, spy: ['why', 'services', 'about', 'contact'], hideFabAt: 'contact' });
