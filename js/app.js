@@ -51,7 +51,7 @@ function startHero3d() {
 // وفي index.html: <canvas class="h3-cv" id="stage" aria-hidden="true"></canvas>  بدل عنصر <video id="hv">
 ================================================================================ */
 {
-  hv = initHeroVideo({ hero, stick, video: $('#hv'), hdr: () => $('#hdr').offsetHeight, reduced, saveData });
+  hv = initHeroVideo({ hero, stick, video: $('#hv'), hdr: () => $('#hdr').offsetHeight, reduced, saveData, stops: [0, 3.4, 6.0, 9.0, 11.6], srcDesktop: 'assets/hero/hero-desktop.mp4', srcPhone: 'assets/hero/hero-phone.mp4', srcDesktopRev: 'assets/hero/hero-desktop-rev.mp4', srcPhoneRev: 'assets/hero/hero-phone-rev.mp4', rate: 2 });
   const go = () => { (window.requestIdleCallback ? requestIdleCallback(() => heroNear && hv.load(), { timeout: 1500 }) : setTimeout(() => heroNear && hv.load(), 500)); };
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; if (!heroOn) hv.pause(); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
