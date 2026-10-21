@@ -42,8 +42,9 @@ $('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('butt
   const go = () => { (window.requestIdleCallback ? requestIdleCallback(() => heroNear && hv.load(), { timeout: 1500 }) : setTimeout(() => heroNear && hv.load(), 500)); };
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; if (!heroOn) hv.pause(); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
-    /* بعيداً عن الهيرو بأكثر من شاشتين ونصف: يُفرَّغ الفيديو من الذاكرة، ويعود حين نقترب */
-    new IntersectionObserver(([e]) => { heroNear = e.isIntersecting; if (!heroNear) hv.unload(); else go(); }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
+    /* الفيديو يُحمَّل مرة واحدة ويبقى (إعادة التحميل تسبّب تقطيعاً)، ويتوقف فقط خارج الشاشة. على الأجهزة قليلة الذاكرة (أقل من 2 غيغا) يُفرَّغ إذا ابتعدنا أكثر من شاشتين ونصف */
+    const lowMem = (navigator.deviceMemory || 8) <= 2;
+    new IntersectionObserver(([e]) => { heroNear = e.isIntersecting; if (!heroNear && lowMem) hv.unload(); else if (heroNear) go(); }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
   } else { heroNear = true; go(); }
 }
 
