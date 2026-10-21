@@ -37,6 +37,19 @@ function heroLayout() {
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
 addEventListener('resize', () => { heroLayout(); }, { passive: true });
 $('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !hv) return; hv.jump(+b.dataset.i); });
+/* ================= المشهد الثلاثي الأبعاد الحي (مُعطَّل ومحفوظ، لا يُحذف أبداً) =================
+   كان الهيرو مشهد three.js حياً (كيبورد مضاء). الآن يُشغَّل فيديو مُصوَّر منه. لتعديل الفيديو مستقبلاً: شغّل المشهد من tools/hero_render/hero3d.js
+   (render.html + render.py) ثم أعد الترميز. ولإعادة المشهد الحي بدل الفيديو أعد هذا الكود (يتطلب js/vendor/three.module.min.js الموجود في tools/hero_render/vendor):
+let h3d = null, starting = false, loaded = document.readyState === 'complete';
+function startHero3d() {
+  if (reduced || h3d || starting || !hero || !heroNear) return; starting = true;
+  let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
+  import('./hero3d.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || (navigator.hardwareConcurrency || 8) <= 4, saveData, onReady: () => stick.classList.add('on3d') }))
+    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
+}
+// داخل heroLayout():  h3d && h3d.setProgress(heroP);     وعند الابتعاد: h3d.dispose(); h3d = null;
+// وفي index.html: <canvas class="h3-cv" id="stage" aria-hidden="true"></canvas>  بدل عنصر <video id="hv">
+================================================================================ */
 {
   hv = initHeroVideo({ hero, stick, video: $('#hv'), hdr: () => $('#hdr').offsetHeight, reduced, saveData });
   const go = () => { (window.requestIdleCallback ? requestIdleCallback(() => heroNear && hv.load(), { timeout: 1500 }) : setTimeout(() => heroNear && hv.load(), 500)); };
