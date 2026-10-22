@@ -8,6 +8,13 @@ export const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } 
 export const root = document.documentElement;
 export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const saveData = !!(navigator.connection && navigator.connection.saveData);
+/* مستوى الجهاز: weak = معالج 4 أنوية أو أقل أو رام 2 غيغا أو أقل → يُتخطّى الهيرو الثلاثي الأبعاد من أول سكرول (صورة ثابتة + عنوان)؛
+   lite = جهاز متوسط (حتى 6 أنوية أو 4 غيغا) → مشهد أخفّ؛ full = كامل. للتجربة: ?hero=on يفرض المشهد، ?hero=off يفرض التخطّي. */
+export const deviceTier = (() => {
+  const q = new URLSearchParams(location.search).get('hero'), c = navigator.hardwareConcurrency || 8, m = navigator.deviceMemory || 8;
+  if (q === 'on') return 'full'; if (q === 'off') return 'weak';
+  return (c <= 4 || m <= 2) ? 'weak' : (c <= 6 || m <= 4) ? 'lite' : 'full';
+})();
 export const LANGS = Object.keys(T);
 root.classList.add('js');
 
