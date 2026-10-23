@@ -10,7 +10,8 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
 const hero = $('#top'), stick = $('#stick'), N = 4;
 let heroP = 0, h3d = null, heroOn = true;
-const skipHero = deviceTier === 'weak' || saveData;                  // جهاز ضعيف: لا مشهد ثلاثي الأبعاد، والهيرو شاشة واحدة (صورة + العنوان) فيُتخطّى من أول سكرول
+/* الهيرو الآن تسلسل صور مُصوَّر مسبقاً (js/hero-seq.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة بل نحمّل منه إطاراً أقل (stride)؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
+const skipHero = saveData || new URLSearchParams(location.search).get('hero') === 'off';
 if (skipHero) document.documentElement.classList.add('hero-skip');
 function heroHtml(t) {
   const h = t.hero;
@@ -47,7 +48,7 @@ let heroNear = false, loaded = document.readyState === 'complete', starting = fa
 function startHero3d() {
   if (reduced || skipHero || h3d || starting || !hero || !heroNear) return; starting = true;
   let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
-  import('./hero3d.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || deviceTier !== 'full', saveData, onReady: () => stick.classList.add('on3d') }))
+  import('./hero-seq.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || deviceTier !== 'full', saveData, onReady: () => stick.classList.add('on3d') }))
     .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
 }
 if (!reduced && !skipHero) {
