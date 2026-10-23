@@ -8,7 +8,7 @@
   الصفحة تتحرك مع زمن المقطع (الفصول النصية تتبدّل معه)، وبعد المحطة الرابعة يكمل الموقع تمريره عادياً. dispose() يحرّر كل شيء من الذاكرة.
 */
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-const BASE = 'assets/hv/', FR1 = 1 / 60, ORDER = ['f0', 'f1', 'r0', 'f2', 'r1', 'f3', 'r2', 'r3'];
+const BASE = 'assets/hv/', FR1 = 1 / 60, ORDER = ['f0', 'f1', 'f2', 'f3']                      // التحميل المسبق للأمام فقط؛ مقطع الرجوع يُحمَّل عند الوصول إلى المحطة (prime) فلا نهدر بيانات من لا يرجع;
 const SPEC = { desktop: { w: 2560, h: 1440 }, phone: { w: 1080, h: 1920 } };
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
