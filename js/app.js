@@ -4,18 +4,13 @@ import { $, $$, esc, shell, href, waUrl, ICON, reduced, saveData, lazyMedia, tr,
 import { workCard } from './cards.js';
 import { mountDemos } from './demos.js';
 import { initServices } from './services.js';
-import { initHeroSteps } from './hero-steps.js';
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
 const hero = $('#top'), stick = $('#stick'), STG = 5;           // خمس محطات = البداية + أربع تمريرات؛ الفصول الأربعة تتبدّل معها (الأخير يبقى للمحطتين الأخيرتين)
-/* تقدّم المشهد عند كل محطة (الإطار = p*299)؛ بين محطتين يتحرك p خطياً مع التمرير الآلي */
-/* المحطات تقع على إطارات صحيحة (0، 138، 191، 257، 299 من 299) كي لا تقف الصورة على مزيج شبحي بين إطارين */
-const FR = 299, STOPS_P = [0, 138 / FR, 191 / FR, 257 / FR, 1];
-const sceneP = (s) => { const k = clamp(Math.floor(s * (STG - 1)), 0, STG - 2), u = s * (STG - 1) - k; return STOPS_P[k] + (STOPS_P[k + 1] - STOPS_P[k]) * clamp(u); };
 let heroP = 0, h3d = null, heroOn = true;
-/* الهيرو الآن تسلسل صور مُصوَّر مسبقاً (js/hero-seq.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة بل نحمّل منه إطاراً أقل (stride)؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
+/* الهيرو الآن فيديو حقيقي مُصوَّر مسبقاً بأربع وقفات (js/hero-video.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
 const skipHero = saveData || new URLSearchParams(location.search).get('hero') === 'off';
 if (skipHero) document.documentElement.classList.add('hero-skip');
 function heroHtml(t) {
@@ -41,19 +36,17 @@ function heroLayout() {
   const ai = clamp(Math.round(pos), 0, STG - 1);
   dots.forEach((d, i) => d.classList.toggle('on', i === ai));
   $('#h3Hint').classList.toggle('gone', heroP > .02);
-  h3d && h3d.setProgress(sceneP(heroP));
 }
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
-addEventListener('resize', () => { heroLayout(); h3d && h3d.resize(); }, { passive: true });
-/* أربع تمريرات فقط: كل تمريرة تشغّل تسلسل الصور تلقائياً إلى المحطة التالية ثم يقف (js/hero-steps.js) */
-const steps = (!reduced && !skipHero) ? initHeroSteps({ hero, stick, stops: STG, weight: (a, b) => (sceneP(clamp(b)) - sceneP(clamp(a))) * FR, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open') }) : null;
-$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !steps) return; steps.jump(+b.dataset.i); });
+addEventListener('resize', () => { heroLayout(); }, { passive: true });
+/* أربع تمريرات فقط: كل تمريرة تشغّل فيديو الهيرو تلقائياً إلى المحطة التالية ثم يقف (js/hero-video.js يملك العجلة واللمس والمفاتيح) */
+$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !h3d) return; h3d.jump(+b.dataset.i); });
 let heroNear = false, loaded = document.readyState === 'complete', starting = false;
 function startHero3d() {
   if (reduced || skipHero || h3d || starting || !hero || !heroNear) return; starting = true;
   let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
-  import('./hero-seq.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || deviceTier !== 'full', saveData, onReady: () => stick.classList.add('on3d') }))
-    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(sceneP(heroP)); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
+  import('./hero-video.js').then((m) => m.createHero({ canvas, hero, stick, stops: STG, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open'), onReady: () => stick.classList.add('on3d'), onFail: () => stick.classList.remove('on3d') }))
+    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setActive(heroOn); }).catch((e) => { console.warn('hero video', e); }).finally(() => { starting = false; });
 }
 if (!reduced && !skipHero) {
   const go = () => { loaded = true; (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700)); };
@@ -135,7 +128,6 @@ function render(t, lg) {
     + `<a class="btn btn-lg btn-line" href="${esc(CONFIG.INSTAGRAM)}" target="_blank" rel="noopener"><span class="bi">${ICON.ig}</span><span dir="ltr">${esc(CONFIG.INSTAGRAM_SHOW)}</span></a>`
     + `<a class="btn btn-lg btn-line" href="${esc(CONFIG.LINKEDIN)}" target="_blank" rel="noopener"><span class="bi">${ICON.li}</span>${esc(c.linkedin)}</a>`;
   $('#cTel').innerHTML = CONFIG.WA_NUMBER ? `<a dir="ltr" href="${esc(wu)}" target="_blank" rel="noopener">${esc(CONFIG.WA_SHOW)}</a>` : '';
-  h3d && h3d.setChat(t.hero.chat);
   heroLayout();
 }
 shell({ active: '', render, spy: ['why', 'services', 'about', 'contact'], hideFabAt: 'contact' });
