@@ -11,7 +11,8 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
 const hero = $('#top'), stick = $('#stick'), STG = 5;           // خمس محطات = البداية + أربع تمريرات؛ الفصول الأربعة تتبدّل معها (الأخير يبقى للمحطتين الأخيرتين)
 /* تقدّم المشهد عند كل محطة (الإطار = p*299)؛ بين محطتين يتحرك p خطياً مع التمرير الآلي */
-const STOPS_P = [0, 0.46, 0.64, 0.86, 1];
+/* المحطات تقع على إطارات صحيحة (0، 138، 191، 257، 299 من 299) كي لا تقف الصورة على مزيج شبحي بين إطارين */
+const FR = 299, STOPS_P = [0, 138 / FR, 191 / FR, 257 / FR, 1];
 const sceneP = (s) => { const k = clamp(Math.floor(s * (STG - 1)), 0, STG - 2), u = s * (STG - 1) - k; return STOPS_P[k] + (STOPS_P[k + 1] - STOPS_P[k]) * clamp(u); };
 let heroP = 0, h3d = null, heroOn = true;
 /* الهيرو الآن تسلسل صور مُصوَّر مسبقاً (js/hero-seq.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة بل نحمّل منه إطاراً أقل (stride)؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
@@ -45,7 +46,7 @@ function heroLayout() {
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
 addEventListener('resize', () => { heroLayout(); h3d && h3d.resize(); }, { passive: true });
 /* أربع تمريرات فقط: كل تمريرة تشغّل تسلسل الصور تلقائياً إلى المحطة التالية ثم يقف (js/hero-steps.js) */
-const steps = (!reduced && !skipHero) ? initHeroSteps({ hero, stick, stops: STG, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open') }) : null;
+const steps = (!reduced && !skipHero) ? initHeroSteps({ hero, stick, stops: STG, weight: (a, b) => (sceneP(clamp(b)) - sceneP(clamp(a))) * FR, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open') }) : null;
 $('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !steps) return; steps.jump(+b.dataset.i); });
 let heroNear = false, loaded = document.readyState === 'complete', starting = false;
 function startHero3d() {

@@ -20,7 +20,7 @@ export async function createHero({ canvas, lite = false, saveData = false, onRea
   const ctx = canvas.getContext('2d', { alpha: false }); if (!ctx) throw new Error('no 2d');
   const ac = new AbortController();
   const blobs = new Map(), bmps = new Map(), decoding = new Set(), avail = [];   // avail: فهارس الإطارات المحمّلة (مرتبة)
-  let target = 0, cur = 0, active = true, dead = false, raf = 0, last = 0, dirty = true, readyFired = false, lastDir = 1, cw = 0, ch = 0;
+  let target = 0, cur = 0, speed = 0, active = true, dead = false, raf = 0, last = 0, dirty = true, readyFired = false, lastDir = 1, cw = 0, ch = 0;
   const useBitmap = typeof createImageBitmap === 'function';
 
   /* ---------------- التحميل التدريجي: متباعد أولاً ثم أكثف ---------------- */
@@ -70,7 +70,11 @@ export async function createHero({ canvas, lite = false, saveData = false, onRea
     else {
       const gap = B - A, t = clamp((f - A) / gap);
       if (gap > stride * 2 + 1) draw(bmps.get(t < .5 ? A : B), 1);           // فجوة كبيرة (أثناء التحميل): الأقرب فقط بلا شبح
-      else { draw(bmps.get(A), 1); if (t > .02) draw(bmps.get(B), t); }
+      else {
+        /* بطيئاً (نهاية الوقفة): نشدّ المزج نحو إطار واحد واضح بدل ذوبان شبحي بين إطارين؛ سريعاً: مزج كامل (يبدو كضبابية حركة) */
+        const sharp = clamp(1 - speed / 40), q = clamp((t - 0.25) / 0.5), a = t + (q * q * (3 - 2 * q) - t) * sharp * 0.9;
+        draw(bmps.get(A), 1); if (a > .02) draw(bmps.get(B), a);
+      }
     }
     ctx.globalAlpha = 1;
     if (!readyFired) { readyFired = true; requestAnimationFrame(() => { if (!dead) onReady && onReady(); }); }
@@ -80,7 +84,7 @@ export async function createHero({ canvas, lite = false, saveData = false, onRea
     raf = 0; if (dead || !active) return;
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     const d = target - cur; let moving = false;
-    if (Math.abs(d) > 0.002) { cur += d * (1 - Math.exp(-dt * 9)); lastDir = d > 0 ? 1 : -1; moving = true; } else cur = target;
+    if (Math.abs(d) > 0.1) { cur += d * (1 - Math.exp(-dt * 28)); lastDir = d > 0 ? 1 : -1; moving = true; speed = Math.abs(d) * 28; } else { cur = target; speed = 0; }   // ذيل قصير: لا نزحف بين إطارين، نستقر على الإطار
     if (moving || dirty) { plan(); render(); dirty = false; }
     if (moving || dirty || decoding.size) raf = requestAnimationFrame(tick);
   }
