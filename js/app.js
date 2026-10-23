@@ -2,6 +2,7 @@
 import { CONFIG, WORKS, FEATURED, PICK } from './content.js';
 import { $, $$, esc, shell, href, waUrl, ICON, reduced, saveData, lazyMedia, tr, lang, deviceTier } from './shared.js';
 import { workCard } from './cards.js';
+import { initHeroVideo } from './hero-video.js';
 import { mountDemos } from './demos.js';
 import { initServices } from './services.js';
 
@@ -10,7 +11,7 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
 const hero = $('#top'), stick = $('#stick'), STG = 5;           // خمس محطات = البداية + أربع تمريرات؛ الفصول الأربعة تتبدّل معها (الأخير يبقى للمحطتين الأخيرتين)
 let heroP = 0, h3d = null, heroOn = true;
-/* الهيرو الآن فيديو حقيقي مُصوَّر مسبقاً بأربع وقفات (js/hero-video.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
+/* الهيرو فيديو دائر خفيف (js/hero-video.js) يعمل على كل الأجهزة بما فيها الآيفون؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
 const skipHero = saveData || new URLSearchParams(location.search).get('hero') === 'off';
 if (skipHero) document.documentElement.classList.add('hero-skip');
 function heroHtml(t) {
@@ -39,25 +40,21 @@ function heroLayout() {
 }
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
 addEventListener('resize', () => { heroLayout(); }, { passive: true });
-/* أربع تمريرات فقط: كل تمريرة تشغّل فيديو الهيرو تلقائياً إلى المحطة التالية ثم يقف (js/hero-video.js يملك العجلة واللمس والمفاتيح) */
-$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !h3d) return; h3d.jump(+b.dataset.i); });
-let heroNear = false, loaded = document.readyState === 'complete', starting = false;
-function startHero3d() {
-  if (reduced || skipHero || h3d || starting || !hero || !heroNear) return; starting = true;
-  let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
-  import('./hero-video.js').then((m) => m.createHero({ canvas, hero, stick, stops: STG, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open'), onReady: () => stick.classList.add('on3d'), onFail: () => stick.classList.remove('on3d') }))
-    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setActive(heroOn); }).catch((e) => { console.warn('hero video', e); }).finally(() => { starting = false; });
-}
+/* الهيرو فيديو دائر بلا علاقة بالتمرير (js/hero-video.js): يعمل وهو ظاهر ويتوقف فور الابتعاد ويُفرَّغ من الذاكرة حين نبتعد كثيراً؛ الفصول تتبع التمرير الأصلي */
+const hv = (reduced || skipHero) ? null : initHeroVideo({ hero, stick, video: $('#stage'), hdr: () => $('#hdr').offsetHeight, reduced, saveData, stops: STG, clips: 'assets/hero/', onFail: () => { h3d = null; } });
+$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !hv) return; hv.jump(+b.dataset.i); });
+let heroNear = false, loaded = document.readyState === 'complete';
+function startHero3d() { if (!hv || h3d || !heroNear) return; hv.load(); h3d = hv; }
 if (!reduced && !skipHero) {
   const go = () => { loaded = true; (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700)); };
   if (loaded) go(); else addEventListener('load', go, { once: true });
 }
 if ('IntersectionObserver' in window) {
-  new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; h3d && h3d.setActive(heroOn); $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
+  new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; $('#fx').classList.toggle('off', !e.isIntersecting); }, { rootMargin: '80px' }).observe(hero);
   /* بعيداً عن الهيرو بأكثر من شاشتين ونصف: يُفرَّغ المشهد كله (سياق الرسم والفيديو)، ويعود حين نقترب */
   new IntersectionObserver(([e]) => {
     heroNear = e.isIntersecting;
-    if (!heroNear && h3d) { h3d.dispose(); h3d = null; stick.classList.remove('on3d'); }
+    if (!heroNear && h3d) { h3d.unload(); h3d = null; }
     else if (heroNear && !h3d && loaded && !reduced && !skipHero) startHero3d();
   }, { rootMargin: '250% 0px 250% 0px' }).observe(hero);
 } else { heroNear = true; }

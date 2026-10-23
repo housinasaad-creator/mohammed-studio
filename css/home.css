@@ -6,7 +6,7 @@
 .h3-poster { position: absolute; inset: 0; z-index: 2; transition: opacity .9s var(--ease) .1s; pointer-events: none; } .h3-poster img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .stick.on3d .h3-poster { opacity: 0; }
 .stick::before { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(14, 17, 23, .94) 0%, rgba(14, 17, 23, .72) 30%, rgba(14, 17, 23, 0) 62%); }
-.h3-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; display: block; }
+.h3-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; display: block; object-fit: cover; }
 .h3-wrap { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .h3-copy { position: absolute; inset: 0; }
 .chap { position: absolute; top: 50%; left: 0; width: min(560px, 100%); translate: 0 -50%; will-change: transform, opacity; }
@@ -235,5 +235,3 @@ html[lang="ar"] .svx-b :is(.t, .d) { unicode-bidi: plaintext; text-align: left; 
 .hero-skip .stick { position: relative; top: 0; height: calc(100svh - var(--hdr)); min-height: 520px; }
 .hero-skip .chap:not(:first-child), .hero-skip .h3-dots, .hero-skip .h3-hint, .hero-skip .h3-cv { display: none; }
 .hero-skip .chap:first-child { opacity: 1; }
-/* عناصر الفيديو التي يقرأ منها hero-video.js: غير ظاهرة (العرض كله على اللوحة) */
-.hv-el { position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; z-index: -1; }
