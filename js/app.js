@@ -4,11 +4,15 @@ import { $, $$, esc, shell, href, waUrl, ICON, reduced, saveData, lazyMedia, tr,
 import { workCard } from './cards.js';
 import { mountDemos } from './demos.js';
 import { initServices } from './services.js';
+import { initHeroSteps } from './hero-steps.js';
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
-const hero = $('#top'), stick = $('#stick'), N = 4;
+const hero = $('#top'), stick = $('#stick'), STG = 5;           // خمس محطات = البداية + أربع تمريرات؛ الفصول الأربعة تتبدّل معها (الأخير يبقى للمحطتين الأخيرتين)
+/* تقدّم المشهد عند كل محطة (الإطار = p*299)؛ بين محطتين يتحرك p خطياً مع التمرير الآلي */
+const STOPS_P = [0, 0.46, 0.64, 0.86, 1];
+const sceneP = (s) => { const k = clamp(Math.floor(s * (STG - 1)), 0, STG - 2), u = s * (STG - 1) - k; return STOPS_P[k] + (STOPS_P[k + 1] - STOPS_P[k]) * clamp(u); };
 let heroP = 0, h3d = null, heroOn = true;
 /* الهيرو الآن تسلسل صور مُصوَّر مسبقاً (js/hero-seq.js): خفيف ويعمل على كل الأجهزة بما فيها الآيفون، لذلك لا نتخطّاه على الأجهزة الضعيفة بل نحمّل منه إطاراً أقل (stride)؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
 const skipHero = saveData || new URLSearchParams(location.search).get('hero') === 'off';
@@ -27,29 +31,28 @@ function heroLayout() {
   if (skipHero) { chaps.forEach((c, i) => { c.classList.toggle('on', i === 0); c.style.opacity = ''; c.style.transform = ''; c.style.pointerEvents = i === 0 ? 'auto' : 'none'; c.inert = i !== 0; }); return; }
   const hdr = $('#hdr').offsetHeight, total = Math.max(1, hero.offsetHeight - stick.offsetHeight);
   heroP = reduced ? 0 : clamp(-(hero.getBoundingClientRect().top - hdr) / total);
+  const pos = heroP * (STG - 1);                                    // 0..4: يمرّ بالمحطات كأعداد صحيحة
   chaps.forEach((c, i) => {
-    const q = heroP * N - i, inn = i === 0 ? 1 : smooth(q / .16), out = i === N - 1 ? 1 : smooth((1 - q) / .16), o = Math.min(inn, out);
+    const inn = i === 0 ? 1 : smooth((pos - (i - .65)) / .3), out = i === chaps.length - 1 ? 1 : 1 - smooth((pos - (i + .35)) / .3), o = Math.min(inn, out);
     c.style.opacity = reduced ? '' : o.toFixed(3); c.style.transform = reduced ? '' : `translate3d(0,${((1 - inn) * 34 - (1 - out) * 34).toFixed(1)}px,0)`;
     const on = o > .5 || reduced; c.classList.toggle('on', on); c.style.pointerEvents = on ? 'auto' : 'none'; c.inert = !on;
   });
-  const ai = clamp(Math.floor(heroP * N), 0, N - 1);
+  const ai = clamp(Math.round(pos), 0, STG - 1);
   dots.forEach((d, i) => d.classList.toggle('on', i === ai));
   $('#h3Hint').classList.toggle('gone', heroP > .02);
-  h3d && h3d.setProgress(heroP);
+  h3d && h3d.setProgress(sceneP(heroP));
 }
 let hraf = 0; addEventListener('scroll', () => { hraf = hraf || requestAnimationFrame(() => { hraf = 0; heroLayout(); }); }, { passive: true });
 addEventListener('resize', () => { heroLayout(); h3d && h3d.resize(); }, { passive: true });
-$('#h3Dots').addEventListener('click', (e) => {
-  const b = e.target.closest('button'); if (!b || reduced) return;
-  const total = hero.offsetHeight - stick.offsetHeight, top = hero.getBoundingClientRect().top + scrollY - $('#hdr').offsetHeight;
-  scrollTo({ top: top + total * ((+b.dataset.i + .5) / N), behavior: 'smooth' });
-});
+/* أربع تمريرات فقط: كل تمريرة تشغّل تسلسل الصور تلقائياً إلى المحطة التالية ثم يقف (js/hero-steps.js) */
+const steps = (!reduced && !skipHero) ? initHeroSteps({ hero, stick, stops: STG, hdr: () => $('#hdr').offsetHeight, locked: () => document.documentElement.classList.contains('noscroll') || document.body.classList.contains('noscroll') || $('#hdr').classList.contains('open') }) : null;
+$('#h3Dots').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || reduced || !steps) return; steps.jump(+b.dataset.i); });
 let heroNear = false, loaded = document.readyState === 'complete', starting = false;
 function startHero3d() {
   if (reduced || skipHero || h3d || starting || !hero || !heroNear) return; starting = true;
   let canvas = $('#stage'); if (canvas.dataset.used) { const n = canvas.cloneNode(false); delete n.dataset.used; canvas.replaceWith(n); canvas = n; } canvas.dataset.used = '1';
   import('./hero-seq.js').then((m) => m.createHero({ canvas, lite: innerWidth < 760 || deviceTier !== 'full', saveData, onReady: () => stick.classList.add('on3d') }))
-    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(heroP); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
+    .then((h) => { if (!heroNear) { h.dispose(); return; } h3d = h; h.setChat(tr().hero.chat); h.setProgress(sceneP(heroP)); h.setActive(heroOn); }).catch((e) => { console.warn('hero3d', e); }).finally(() => { starting = false; });
 }
 if (!reduced && !skipHero) {
   const go = () => { loaded = true; (window.requestIdleCallback ? requestIdleCallback(startHero3d, { timeout: 1800 }) : setTimeout(startHero3d, 700)); };
@@ -104,7 +107,7 @@ function codeHtml(n) { let left = n, out = ''; for (const [s, c] of tokens) { if
 let demos = null; const svc = initServices();
 function render(t, lg) {
   chaps = []; $('#h3Copy').innerHTML = heroHtml(t); chaps = $$('.chap');
-  $('#h3Dots').innerHTML = Array.from({ length: N }, (_, i) => `<li><button type="button" data-i="${i}" tabindex="-1" aria-label="${i + 1}"></button></li>`).join(''); dots = $$('#h3Dots button');
+  $('#h3Dots').innerHTML = Array.from({ length: STG }, (_, i) => `<li><button type="button" data-i="${i}" tabindex="-1" aria-label="${i + 1}"></button></li>`).join(''); dots = $$('#h3Dots button');
   $('#h3Hint').textContent = t.hero.scroll;
   const k = t.pick; $('#kKicker').textContent = k.kicker; $('#kH2').textContent = k.h2; $('#kSub').textContent = k.sub;
   $('#kChips').innerHTML = PICK.map((p, i) => `<button type="button" data-i="${i}">${esc(k.items[p.id][0])}</button>`).join(''); pickOut();
