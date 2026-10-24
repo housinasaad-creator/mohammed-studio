@@ -11,6 +11,7 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), smooth = (x) => 
 /* ---------------- الهيرو: فصول نصية تتبدّل مع التمرير + مشهد three.js يُحمَّل بعد اكتمال الصفحة ---------------- */
 const hero = $('#top'), stick = $('#stick'), STG = 5;           // خمس محطات = البداية + أربع تمريرات؛ الفصول الأربعة تتبدّل معها (الأخير يبقى للمحطتين الأخيرتين)
 let heroP = 0, h3d = null, heroOn = true;
+const ONE_SCREEN = true;                                    // الهيرو شاشة واحدة: الفيديو الدائر خلف العنوان الأول فقط (الصنف hero-one على html يكوّن التخطيط)
 /* الهيرو فيديو دائر خفيف (js/hero-video.js) يعمل على كل الأجهزة بما فيها الآيفون؛ نتخطّاه فقط مع توفير البيانات أو ?hero=off */
 const skipHero = saveData || new URLSearchParams(location.search).get('hero') === 'off';
 if (skipHero) document.documentElement.classList.add('hero-skip');
@@ -25,7 +26,7 @@ function heroHtml(t) {
 }
 let chaps = [], dots = [];
 function heroLayout() {
-  if (skipHero) { chaps.forEach((c, i) => { c.classList.toggle('on', i === 0); c.style.opacity = ''; c.style.transform = ''; c.style.pointerEvents = i === 0 ? 'auto' : 'none'; c.inert = i !== 0; }); return; }
+  if (skipHero || ONE_SCREEN) { chaps.forEach((c, i) => { c.classList.toggle('on', i === 0); c.style.opacity = ''; c.style.transform = ''; c.style.pointerEvents = i === 0 ? 'auto' : 'none'; c.inert = i !== 0; }); return; }
   const hdr = $('#hdr').offsetHeight, total = Math.max(1, hero.offsetHeight - stick.offsetHeight);
   heroP = reduced ? 0 : clamp(-(hero.getBoundingClientRect().top - hdr) / total);
   const pos = heroP * (STG - 1);                                    // 0..4: يمرّ بالمحطات كأعداد صحيحة

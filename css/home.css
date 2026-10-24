@@ -235,3 +235,9 @@ html[lang="ar"] .svx-b :is(.t, .d) { unicode-bidi: plaintext; text-align: left; 
 .hero-skip .stick { position: relative; top: 0; height: calc(100svh - var(--hdr)); min-height: 520px; }
 .hero-skip .chap:not(:first-child), .hero-skip .h3-dots, .hero-skip .h3-hint, .hero-skip .h3-cv { display: none; }
 .hero-skip .chap:first-child { opacity: 1; }
+
+/* الهيرو شاشة واحدة (hero-one): الفيديو الدائر خلف العنوان الأول فقط */
+.hero-one .hero3 { height: auto; }
+.hero-one .stick { position: relative; top: 0; height: calc(100svh - var(--hdr)); min-height: 520px; }
+.hero-one .chap:not(:first-child), .hero-one .h3-dots, .hero-one .h3-hint { display: none; }
+.hero-one .chap:first-child { opacity: 1; }
