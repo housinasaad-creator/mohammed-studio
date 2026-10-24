@@ -19,7 +19,7 @@ export const CONFIG = {
 export const WORKS = [
   { id: 'mozaik', group: 'real', year: 2026, url: 'https://www.mozaikofset.com.tr/', tags: ['B2B', '3D', 'TR · EN · AR'] },
   { id: 'chocolate', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/mh-chocolate-site/', tags: ['3D', 'WhatsApp', 'Mobile'] },
-  { id: 'packaging', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/fortunepack-site/', tags: ['3D fold', 'Box studio', 'TR · EN · AR'] },
+  { id: 'packaging', group: 'real', year: 2026, url: 'https://fortunepack.com.tr/', tags: ['3D fold', 'Box studio', 'TR · EN · AR'] },
   { id: 'english', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/english-learning-platform/', tags: ['Education', 'A1 → C1', 'Audio'] },
   { id: 'tekton', group: 'show', year: 2026, wip: true, url: 'https://housinasaad-creator.github.io/tekton-construction-site/', tags: ['3D story', 'Site lab', 'AR · TR · EN'] },
   { id: 'verdara', group: 'show', year: 2026, wip: true, url: 'https://housinasaad-creator.github.io/verdara-seeds-demo/', tags: ['3D', 'Catalogue', 'TR · EN · FR · AR'] },
