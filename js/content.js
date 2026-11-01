@@ -15,14 +15,16 @@ export const CONFIG = {
   YEAR: 2026
 };
 
-/* group: real = مشاريع حقيقية (لعملاء أو مشروع خاص)، show = نماذج وتجارب. wip = جارٍ العمل عليه. hidden = لا يظهر. year = سنة التنفيذ */
+/* url: null = لا رابط معاينة (يُخفى زر «افتح الموقع»). group: real = مشاريع حقيقية (لعملاء أو مشروع خاص)، show = نماذج وتجارب. wip = جارٍ العمل عليه. hidden = لا يظهر. year = سنة التنفيذ */
 export const WORKS = [
   { id: 'mozaik', group: 'real', year: 2026, url: 'https://www.mozaikofset.com.tr/', tags: ['B2B', '3D', 'TR · EN · AR'] },
+  { id: 'sama', group: 'real', year: 2026, url: null, tags: ['AI', 'Live map', 'AR · TR · EN'] },
   { id: 'chocolate', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/mh-chocolate-site/', tags: ['3D', 'WhatsApp', 'Mobile'] },
   { id: 'packaging', group: 'real', year: 2026, url: 'https://fortunepack.com.tr/', tags: ['3D fold', 'Box studio', 'TR · EN · AR'] },
   { id: 'english', group: 'real', year: 2026, url: 'https://housinasaad-creator.github.io/english-learning-platform/', tags: ['Education', 'A1 → C1', 'Audio'] },
   { id: 'tekton', group: 'show', year: 2026, wip: true, url: 'https://housinasaad-creator.github.io/tekton-construction-site/', tags: ['3D story', 'Site lab', 'AR · TR · EN'] },
   { id: 'verdara', group: 'show', year: 2026, wip: true, url: 'https://housinasaad-creator.github.io/verdara-seeds-demo/', tags: ['3D', 'Catalogue', 'TR · EN · FR · AR'] },
+  { id: 'erp', group: 'show', year: 2026, url: null, tags: ['ERP', 'OEE', 'AR · EN · TR'] },
   { id: 'perfume', group: 'show', year: 2026, url: 'https://housinasaad-creator.github.io/mohammed-perfume-site/', tags: ['3D', 'Store', 'AR · EN'] },
   { id: 'hayyak', group: 'show', year: 2026, url: 'https://housinasaad-creator.github.io/hayyak-coffee-site/', tags: ['3D', 'Wholesale', 'AR · TR · EN'] },
   { id: 'furniture', group: 'show', year: 2026, url: 'https://housinasaad-creator.github.io/mohammed-furniture-site/', tags: ['3D', 'Store', 'TR · EN · AR'] },
@@ -30,7 +32,7 @@ export const WORKS = [
   { id: 'hazem', group: 'show', year: 2026, url: 'https://housinasaad-creator.github.io/hazem-driving-school/', tags: ['5 languages', 'Video hero'] }
 ];
 /* المشاريع المعروضة في الصفحة الرئيسية قبل زر "المزيد" */
-export const FEATURED = ['mozaik', 'chocolate'];
+export const FEATURED = ['mozaik', 'sama'];
 
 /* أنشطة "ما نشاطك؟": ex = مثال حقيقي من أعمالنا (يُعرض فقط حيث يوجد مثال مناسب) */
 export const PICK = [
@@ -81,6 +83,8 @@ export const T = {
       open: 'افتح الموقع', more: 'المزيد', wip: 'جارٍ العمل عليه، لم ينتهِ بعد', filters: { all: 'الكل', real: 'مشاريع حقيقية', show: 'نماذج وتجارب' },
       items: {
         mozaik: ['Mozaik Ofset', 'شركة تغليف وطباعة، غازي عنتاب', 'موقع تعريفي وكتالوج منتجات لشركة B2B: عرض ثلاثي الأبعاد للعلب، طلب عرض سعر، وثلاث لغات.'],
+        sama: ['سما تدمر · مدينة ترى طرقها بعين الذكاء الاصطناعي', 'تطبيق ولوحة تحكم بالذكاء الاصطناعي · تدمر', 'تطبيق للمتطوعين فيه ذكاء اصطناعي داخل الهاتف يقترح الحفر والمطبات والشقوق دون إنترنت، ويصل كل بلاغ بصورته وموقعه إلى لوحة تحكم مباشرة: خريطة وفلاتر وتقارير PDF وإشعارات تيليغرام.'],
+        erp: ['النسيج الذهبي · مصنع الملابس على شاشة واحدة', 'نظام إدارة إنتاج لمصنع ملابس', 'نظام ERP لإدارة مصنع ملابس: أرقام اليوم، وكفاءة آلات الخياطة (OEE)، وخط الإنتاج بمراحله، ومستودع قماش ينبّه عند انخفاض المخزون، وتقارير شهرية. بثلاث صلاحيات وثلاث لغات، وببيانات تجريبية.'],
         chocolate: ['MH Chocolate', 'صانعة شوكولا منزلية، غازي عنتاب', 'قطع شوكولا ثلاثية الأبعاد تُدار بالسحب، وتصميم خاص للطلب، وسلة تنتهي برسالة واتساب جاهزة. يعمل بسلاسة على الجوال.'],
         packaging: ['موقع مصنّع تغليف', 'كرتون مضلّع، غازي عنتاب', 'موقع بثلاث لغات: علبة تنطوي أمامك مع التمرير، ومولّد قالب قصّ حيّ بمقاساتك، وكتالوج منتجات، وطلب عرض سعر عبر واتساب. التجربة الكاملة على الكمبيوتر.'],
         english: ['منصة تعلّم الإنجليزية', 'منصة تعليمية، مشروعنا الخاص', 'منصة لتعلّم الإنجليزية بالعربية من A1 إلى C1: شرح للقواعد بالعربي، تمارين تفاعلية، وتسجيلات صوتية.'],
@@ -196,6 +200,8 @@ export const T = {
       open: 'Open the site', more: 'More', wip: 'Work in progress, not finished yet', filters: { all: 'All', real: 'Real projects', show: 'Showcases' },
       items: {
         mozaik: ['Mozaik Ofset', 'Packaging and printing company, Gaziantep', 'A company site and product catalogue for a B2B business: 3D box viewer, quote requests and three languages.'],
+        sama: ['Sama Tadmor · A city that sees its roads through AI eyes', 'AI app and control panel · Tadmur', 'A volunteers’ app where an AI inside the phone suggests potholes, bumps and cracks with no internet. Each report reaches a live control panel with its photo and location: a map, filters, PDF reports and Telegram alerts.'],
+        erp: ['Golden Weave · A whole garment factory on one screen', 'Production management system for a garment factory', 'An ERP for running a garment factory: today’s numbers, sewing-machine efficiency (OEE), a production line with stages, a fabric warehouse that warns when stock runs low, and monthly reports. Three roles, three languages, sample data.'],
         chocolate: ['MH Chocolate', 'Home chocolatier, Gaziantep', 'Draggable 3D chocolate pieces, a custom order builder and a bag that ends in a ready WhatsApp message. Runs smoothly on phones.'],
         packaging: ['Packaging manufacturer website', 'Corrugated packaging, Gaziantep', 'A three-language site: a box that folds as you scroll, a live die-line generator with your own dimensions, a product catalogue and a WhatsApp quote request. Best on desktop.'],
         english: ['English Learning Platform', 'Education platform, our own project', 'An English-learning site for Arabic speakers from A1 to C1: grammar explained in Arabic, interactive exercises and audio recordings.'],
@@ -311,6 +317,8 @@ export const T = {
       open: 'Siteyi aç', more: 'Daha fazla', wip: 'Üzerinde çalışılıyor, henüz bitmedi', filters: { all: 'Tümü', real: 'Gerçek projeler', show: 'Örnekler' },
       items: {
         mozaik: ['Mozaik Ofset', 'Ambalaj ve baskı şirketi, Gaziantep', 'B2B bir şirket için tanıtım sitesi ve ürün kataloğu: kutular için 3D görüntüleyici, teklif talebi ve üç dil.'],
+        sama: ['Sama Tadmor · Bir şehir yollarını yapay zekânın gözüyle görüyor', 'Yapay zekâlı uygulama ve kontrol paneli · Tedmür', 'Gönüllülerin telefonunda internetsiz çalışan bir yapay zekâ çukur, tümsek ve çatlakları öneriyor. Her bildirim fotoğrafı ve konumuyla canlı bir kontrol paneline düşüyor: harita, filtreler, PDF raporlar ve Telegram uyarıları.'],
+        erp: ['Altın Dokuma · Tüm hazır giyim fabrikası tek ekranda', 'Hazır giyim fabrikası için üretim yönetim sistemi', 'Hazır giyim fabrikasını yönetmek için bir ERP: günün rakamları, dikiş makinesi verimliliği (OEE), aşamalı üretim hattı, stok azalınca uyaran kumaş deposu ve aylık raporlar. Üç yetki düzeyi, üç dil, örnek veri.'],
         chocolate: ['MH Chocolate', 'Evde çikolata üreticisi, Gaziantep', 'Sürüklenerek döndürülen 3D çikolata parçaları, özel sipariş oluşturucu ve hazır bir WhatsApp mesajıyla biten sepet. Telefonda akıcı çalışır.'],
         packaging: ['Ambalaj üreticisi web sitesi', 'Oluklu ambalaj, Gaziantep', 'Üç dilli bir site: kaydırdıkça katlanan kutu, ölçülerinize göre canlı kesim şablonu üreteci, ürün kataloğu ve WhatsApp teklif talebi. Tam deneyim masaüstünde.'],
         english: ['English Learning Platform', 'Eğitim platformu, kendi projemiz', "Arapça konuşanlar için A1'den C1'e İngilizce öğrenme sitesi: Arapça anlatımlı dilbilgisi, etkileşimli alıştırmalar ve ses kayıtları."],

@@ -11,13 +11,14 @@ let LB = [], lbI = 0, lastFocus = null;
 function render(t, lang) {
   const [name, who, desc] = t.works.items[id], cs = t.case, ct = C && C.t[lang];
   const badges = `<span class="kb ${w.group === 'real' ? 'kb-real' : ''}">${esc(w.group === 'real' ? cs.real : cs.show)}</span>${w.wip ? `<span class="kb kb-wip">${esc(cs.wip)}</span>` : ''}`;
-  const wa = CONFIG.WA_NUMBER ? waUrl(cs.waMsg.replace('{x}', name)) : '';
+  const ov = (ct && ct.ov) || {};
+  const wa = CONFIG.WA_NUMBER ? waUrl((ov.waMsg || cs.waMsg).replace('{x}', ov.short || name)) : '';
   LB = [];
   const desk = C ? C.desk.map(([f, k], i) => { LB.push({ src: `assets/gallery/${f}.webp`, cap: ct.cap[i], w: 1200 }); return `<figure class="gi rv" style="--d:${(i % 2) * .07}s"><button type="button" class="gi-b" data-lb="${LB.length - 1}" aria-label="${esc(ct.cap[i])}"><img src="assets/gallery/${f}.webp" width="1200" height="750" loading="lazy" decoding="async" alt="${esc(ct.cap[i])}"><span class="kind k-${k}">${esc(cs.kinds[k])}</span><span class="zoom">${ICON.arrow}</span></button><figcaption>${esc(ct.cap[i])}</figcaption></figure>`; }).join('') : '';
   const phs = C ? C.ph.map((f) => { LB.push({ src: `assets/gallery/${f}.webp`, cap: `${name} · ${cs.phones}`, w: 585 }); return `<button type="button" class="phf rv" data-lb="${LB.length - 1}" aria-label="${esc(cs.phones)}"><img src="assets/gallery/${f}.webp" width="585" height="1266" loading="lazy" decoding="async" alt=""></button>`; }).join('') : '';
   const langs = C ? C.langs + (C.moreLangs ? ` · +${C.moreLangs}` : '') : '';
   const facts = [[cs.facts.type, w.group === 'real' ? cs.real : cs.show], [cs.facts.year, w.year], [cs.facts.role, cs.role]];
-  if (C) { facts.push([cs.facts.langs, langs]); facts.push([cs.facts.stack, C.stack.join(' · ')]); }
+  if (C) { facts.push([cs.facts.langs, langs]); if (C.stack && C.stack.length) facts.push([cs.facts.stack, C.stack.join(' · ')]); }
   const p = vis[(idx - 1 + vis.length) % vis.length], n = vis[(idx + 1) % vis.length];
   const nav = (o, label, cls) => `<a class="pn ${cls}" href="${esc(href('work.html', { id: o.id }))}"><img src="assets/shots/${o.id}-d.webp" width="480" height="300" loading="lazy" alt=""><span><small>${esc(label)}</small><b>${esc(t.works.items[o.id][0])}</b></span><i>${cls === 'pn-p' ? ICON.back : ICON.arrow}</i></a>`;
   $('#case').innerHTML = `
@@ -32,7 +33,7 @@ function render(t, lang) {
           <h1>${esc(name)}</h1>
           <p class="cshort">${esc(desc)}</p>
           <div class="tags">${w.tags.map((x) => `<span>${esc(x)}</span>`).join('')}</div>
-          <div class="cbtns"><a class="btn btn-lg" href="${esc(w.url)}" target="_blank" rel="noopener">${esc(cs.open)}<span class="bi">${ICON.ext}</span></a>${wa ? `<a class="btn btn-line btn-lg" href="${esc(wa)}" target="_blank" rel="noopener"><span class="bi ico-wa">${ICON.wa}</span>${esc(cs.ask)}</a>` : ''}</div>
+          <div class="cbtns">${w.url ? `<a class="btn btn-lg" href="${esc(w.url)}" target="_blank" rel="noopener">${esc(cs.open)}<span class="bi">${ICON.ext}</span></a>` : ''}${wa ? `<a class="btn ${w.url ? 'btn-line ' : ''}btn-lg" href="${esc(wa)}" target="_blank" rel="noopener"><span class="bi ico-wa">${ICON.wa}</span>${esc(ov.ask || cs.ask)}</a>` : ''}</div>
         </div>
         <div class="cmedia">
           <div class="bframe"><div class="bdots"><b></b><b></b><b></b></div>
@@ -52,7 +53,7 @@ function render(t, lang) {
   <section class="sec sec-ink" id="phones"><div class="wrap"><header class="sec-h rv"><p class="kicker">${esc(cs.phones)}</p></header><div class="phrow">${phs}</div></div></section>` : ''}
   <section class="sec" id="more"><div class="wrap"><header class="sec-h rv"><p class="kicker">${esc(cs.more)}</p></header><div class="pnrow rv">${nav(p, cs.prev, 'pn-p')}${nav(n, cs.next, 'pn-n')}</div></div></section>
   <section class="sec sec-contact" id="contact"><div class="wrap contact-in">
-    <header class="sec-h rv"><p class="kicker">${esc(t.contact.kicker)}</p><h2>${esc(cs.ctaT)}</h2><p class="lead">${esc(cs.ctaP)}</p></header>
+    <header class="sec-h rv"><p class="kicker">${esc(t.contact.kicker)}</p><h2>${esc(ov.ctaT || cs.ctaT)}</h2><p class="lead">${esc(cs.ctaP)}</p></header>
     <div class="contact-btns rv">${wa ? `<a class="btn btn-lg" href="${esc(wa)}" target="_blank" rel="noopener"><span class="bi ico-wa">${ICON.wa}</span>${esc(t.contact.wa)}</a>` : ''}<a class="btn btn-lg btn-line" href="${esc(CONFIG.INSTAGRAM)}" target="_blank" rel="noopener"><span class="bi">${ICON.ig}</span><span dir="ltr">${esc(CONFIG.INSTAGRAM_SHOW)}</span></a><a class="btn btn-lg btn-line" href="${esc(href('projects.html'))}">${esc(cs.back)}<span class="bi">${ICON.arrow}</span></a></div>
   </div></section>`;
   const v = $('#cvid'), pb = $('#vPause'); const sync = () => { const paused = !!v.dataset.hold || reduced; pb.classList.toggle('paused', paused); pb.setAttribute('aria-label', paused ? 'Play' : 'Pause'); };
